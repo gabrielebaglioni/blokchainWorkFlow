@@ -9,6 +9,7 @@
  * 3. Modello 3D principale (logo/oggetto centrale)
  */
 
+import * as THREE from "three"
 import { loadAndCacheTexture } from "./textureLoader.js"
 import { dotLoader, glbLoader, setDotTexture, setMainObjectModel, dotTexture, mainObjectModel } from "./globalLoaders.js"
 
@@ -35,16 +36,36 @@ export function loadAssets(url) {
     // 1. Carica la texture di background per questa pagina
     loadAndCacheTexture(normalizedUrl),
     
-    // 2. Carica la texture a punti (usata per le particelle)
+    // 2. Crea la texture a punti quadrata (usata per le particelle)
     // Se è già caricata, usa quella in cache
     new Promise((resolve) => {
       if (dotTexture) {
         resolve()
+      } else if (typeof window !== 'undefined') {
+        // Crea una texture quadrata programmaticamente
+        const size = 64
+        const canvas = document.createElement('canvas')
+        canvas.width = size
+        canvas.height = size
+        const context = canvas.getContext('2d')
+        
+        // Sfondo trasparente
+        context.clearRect(0, 0, size, size)
+        
+        // Disegna un quadrato bianco al centro
+        const squareSize = size * 0.6
+        const offset = (size - squareSize) / 2
+        context.fillStyle = 'white'
+        context.fillRect(offset, offset, squareSize, squareSize)
+        
+        // Crea la texture da canvas
+        const texture = new THREE.CanvasTexture(canvas)
+        texture.needsUpdate = true
+        setDotTexture(texture)
+        resolve()
       } else {
-        dotLoader.load("assets/dotTexture.png", (texture) => {
-          setDotTexture(texture)
-          resolve()
-        })
+        // Server-side rendering: risolvi senza texture
+        resolve()
       }
     }),
     

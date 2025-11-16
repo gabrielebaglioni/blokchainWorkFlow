@@ -3,14 +3,13 @@
  * SCENA MINECRAFT
  * ============================================================================
  * 
- * Responsabilità: Orchestrazione della scena completa (casa + alberi + radici)
+ * Responsabilità: Orchestrazione della scena completa (casa + alberi)
  */
 
 import * as THREE from "three"
 import { mainObjectModel, dotTexture } from "../loaders/globalLoaders.js"
 import { createHouseParticles } from "./house.js"
 import { createTreeParticles } from "./tree.js"
-import { createRootsParticles } from "./roots.js"
 
 /**
  * Carica e renderizza l'oggetto 3D principale sulla homepage

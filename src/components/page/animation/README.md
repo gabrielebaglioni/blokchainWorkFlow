@@ -28,10 +28,9 @@ animation/
 │   ├── postProcessing.js       # Inizializzazione effetti post-processing
 │   └── lighting.js             # Illuminazione della scena
 ├── particleObjects/            # Oggetti 3D creati con particelle
-│   ├── minecraftScene.js       # Orchestrazione scena completa (casa + alberi + radici)
+│   ├── minecraftScene.js       # Orchestrazione scena completa (casa + alberi)
 │   ├── house.js                # Creazione casa (cubo + tetto)
 │   ├── tree.js                 # Creazione alberi (tronco + chiome)
-│   ├── roots.js                # Creazione radici (preparato per future implementazioni)
 │   └── sparseParticleMesh.js   # Mesh con particelle sparse (pagine non-homepage)
 ├── visualEffects/              # Effetti visivi
 │   ├── background.js           # Skybox (background panoramico)

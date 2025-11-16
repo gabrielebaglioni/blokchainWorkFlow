@@ -50,7 +50,7 @@ export function createTreeParticles(config, maxParticles, positions, colors, sca
   }
   
   // Prima chioma dell'albero (sfera inferiore) - verde scuro
-  const crownGridDensity = Math.ceil(Math.cbrt(maxParticles * 0.9))
+  const crownGridDensity = Math.ceil(Math.cbrt(maxParticles * 0.8))
   const crownStep = treeCrownRadius * 2 / (crownGridDensity - 1)
   const firstCrownCenterY = treeCrownY + treeCrownRadius * 0.3
   
