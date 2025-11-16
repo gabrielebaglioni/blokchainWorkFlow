@@ -1,0 +1,18 @@
+{
+  "name": "@houseblock/shared-types",
+  "version": "0.1.0",
+  "description": "Shared TypeScript type definitions for HouseBlock monorepo",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0"
+  }
+}
+

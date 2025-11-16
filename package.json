@@ -2,28 +2,23 @@
   "name": "houseblock",
   "version": "0.1.0",
   "private": true,
+  "description": "HouseBlock - A microservices system for AI, automation, and Web3",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@types/node": "18.11.9",
-    "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.9",
-    "eslint": "8.28.0",
-    "eslint-config-next": "13.1.1",
-    "next": "14.1.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "three": "^0.146.0",
-    "typescript": "4.9.3"
+    "dev": "pnpm --filter web-landing dev",
+    "build": "pnpm -r build",
+    "start": "pnpm --filter web-landing start",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean && rm -rf node_modules",
+    "install:all": "pnpm install"
   },
   "devDependencies": {
-    "@svgr/webpack": "^6.1.1",
-    "glslify-loader": "^2.0.0",
-    "raw-loader": "^4.0.2",
-    "sass": "^1.56.1"
-  }
+    "pnpm": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
 }
