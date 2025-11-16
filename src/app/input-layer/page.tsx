@@ -3,7 +3,7 @@ import React, { useEffect } from "react"
 import Link from "../../components/Link"
 import ContentBlock from "../../components/page/Content"
 import Image from "next/image"
-import { loadAndCacheTexture } from "components/page/animate"
+import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
 
 const EthereumFoundation = (props: any) => {
   useEffect(() => {

@@ -9,20 +9,18 @@
 
 import * as THREE from "three"
 import { ROTATION_SPEED, DEFAULT_PARTICLE_COLOR } from "../constants/sceneConfig.js"
-import { createColoredSphere } from "../objects/sphere.js"
-import { createDegenerateParticleMesh } from "../objects/degenerateMesh.js"
-import { createEquirectangularBackground } from "../effects/background.js"
-import { createFireflies } from "../effects/fireflies.js"
-import {
-  initScene,
-  initCamera,
-  initRenderer,
-  initControls,
-  initPostProcessingEffects,
-  renderWebPImages,
-} from "../scene/sceneSetup.js"
+import { createMinecraftHouse } from "../particleObjects/minecraftScene.js"
+import { createSparseParticleMesh } from "../particleObjects/sparseParticleMesh.js"
+import { createEquirectangularBackground } from "../visualEffects/background.js"
+import { createFireflies } from "../visualEffects/fireflies.js"
+import { initScene } from "../scene/scene.js"
+import { initCamera } from "../scene/camera.js"
+import { initRenderer } from "../scene/renderer.js"
+import { initControls } from "../scene/controls.js"
+import { initPostProcessingEffects } from "../scene/postProcessing.js"
+import { renderWebPImages } from "../utils/webpDetection.js"
 import { setLightInScene } from "../scene/lighting.js"
-import { createRenderLoop } from "../animation/renderLoop.js"
+import { createRenderLoop } from "../rendering/renderLoop.js"
 import {
   isHomePage,
   createResizeHandler,
@@ -101,11 +99,11 @@ export function Animate(url) {
     // 8. Aggiunge l'oggetto principale
     const homePage = isHomePage(url)
     if (homePage) {
-      finalPoints = createColoredSphere(scene, {
+      finalPoints = createMinecraftHouse(scene, {
         particleSize: 0.155,
       })
     } else {
-      finalPoints = createDegenerateParticleMesh(scene, {
+      finalPoints = createSparseParticleMesh(scene, {
         particleSize: 0.9,
       })
     }

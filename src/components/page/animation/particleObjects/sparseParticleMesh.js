@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * MESH DEGENERATO (PARTICELLE SPARSE)
+ * MESH CON PARTICELLE SPARSE
  * ============================================================================
  * 
  * Crea un sistema di particelle sparse per le pagine diverse dalla homepage
@@ -10,14 +10,14 @@ import * as THREE from "three"
 import { mainObjectModel, dotTexture } from "../loaders/globalLoaders.js"
 
 /**
- * Carica un mesh "degenerato" (particelle sparse)
+ * Carica un mesh con particelle sparse
  * Usato sulle pagine diverse dalla homepage
  * 
  * @param {THREE.Scene} scene - La scena Three.js
  * @param {Object} config - Configurazione (particleSize, etc.)
  * @returns {THREE.Points} - Il sistema di particelle creato
  */
-export function createDegenerateParticleMesh(scene, config = {}) {
+export function createSparseParticleMesh(scene, config = {}) {
   const object = mainObjectModel
   const particleSize = config.particleSize || 0.9
   

@@ -8,8 +8,8 @@
  */
 
 import * as THREE from "three"
-import firefliesVertexShader from "../animations/firefliesVertexShader.glsl"
-import firefliesFragmentShader from "../animations/firefliesFragmentShader.glsl"
+import firefliesVertexShader from "../shaders/firefliesVertexShader.glsl"
+import firefliesFragmentShader from "../shaders/firefliesFragmentShader.glsl"
 import { rgbToPercentage } from "../utils/colors.js"
 
 /**

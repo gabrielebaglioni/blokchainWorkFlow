@@ -8,7 +8,7 @@
  */
 
 import * as THREE from "three"
-import * as GLTFLoader from "../assets/GLTFLoader.js"
+import * as GLTFLoader from "../threeJsAssets/GLTFLoader.js"
 
 // Verifica se siamo in un ambiente browser (non durante il server-side rendering)
 const isClient = typeof window !== "undefined"
