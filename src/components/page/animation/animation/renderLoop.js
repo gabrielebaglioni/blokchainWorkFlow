@@ -38,6 +38,11 @@ export function createRenderLoop(config) {
    * Loop principale di animazione
    */
   function animate() {
+    // Mantieni il target leggermente più in alto per prospettiva migliore
+    if (controls) {
+      controls.target.set(0, 1, 0)
+    }
+    
     // Rotazione dell'oggetto principale
     if (finalPoints && config.activateParticleRotation !== false) {
       if (FILE_TYPE === "glb" || FILE_TYPE === "obj") {

@@ -538,53 +538,288 @@ export const Animate = (url) => {
       new THREE.Color(0.863, 0.078, 0.235), // #DC143C - Rosso scuro
     ]
     
-    // Genera posizioni per una sfera uniforme usando la spirale di Fibonacci
-    // Questo mantiene una distribuzione uniforme simile alla densità originale
-    const spherePositions = []
-    const sphereColors = []
-    const scaleArray = new Float32Array(particleCount)
+    // Genera posizioni per una casa stile Minecraft (cubo + piramide) - ben squadrata e riconoscibile
+    const housePositions = []
+    const houseColors = []
     
-    for (let i = 0; i < particleCount; i++) {
-      // Spirale di Fibonacci per distribuzione uniforme sulla sfera
-      const goldenAngle = Math.PI * (3 - Math.sqrt(5))  // Angolo aureo
-      const y = 1 - (i / (particleCount - 1)) * 2  // y va da 1 a -1
-      const radius = Math.sqrt(1 - y * y)  // Raggio del cerchio a questa altezza
-      const theta = goldenAngle * i  // Angolo per la spirale
-      
-      const x = Math.cos(theta) * radius * sphereRadius
-      const z = Math.sin(theta) * radius * sphereRadius
-      const yPos = y * sphereRadius
-      
-      spherePositions.push(x, yPos, z)
-      
-      // Assegna un colore unico a ogni particella usando un hash basato sulla posizione
-      // Questo garantisce che anche particelle vicine abbiano colori diversi
-      // Usa una funzione hash semplice basata sulla posizione per avere colori deterministici ma vari
-      const hash = Math.sin(x * 12.9898 + yPos * 78.233 + z * 37.719) * 43758.5453
-      const normalizedHash = (hash - Math.floor(hash))  // Valore tra 0 e 1
-      
-      // Seleziona un colore dalla palette basato sull'hash
-      const colorIndex = Math.floor(normalizedHash * 12) % 12
-      const color = colorPalette[colorIndex]
-      
-      // Mescola con un colore adiacente per più varietà, usando una frazione dell'hash
-      const blendAmount = (normalizedHash * 10) % 1  // Valore tra 0 e 1 per il blend
-      const nextColorIndex = (colorIndex + 1) % 12
-      const nextColor = colorPalette[nextColorIndex]
-      
-      const finalColor = new THREE.Color().lerpColors(color, nextColor, blendAmount)
-      // Rendi i colori più opachi (meno saturati, più solidi)
-      finalColor.multiplyScalar(0.7)  // Riduce la luminosità per effetto più opaco
-      sphereColors.push(finalColor.r, finalColor.g, finalColor.b)
-      
-      // Scala uniforme
-      scaleArray[i] = 0.01
+    // Riduce la densità dei puntini usando solo una frazione delle particelle
+    const densityFactor = 0.4  // Aumentato per includere albero e piramide più densa
+    const reducedParticleCount = Math.floor(particleCount * densityFactor)
+    
+    // Dimensioni della casa stile Minecraft - cubo perfetto per il corpo
+    const houseSize = sphereRadius * 0.18  // Dimensione del cubo (tutti i lati uguali)
+    const pyramidHeight = sphereRadius * 0.12  // Altezza del tetto piramidale
+    
+    // Dividi le particelle: 45% per il corpo, 30% per il tetto, 25% per gli alberi (2 alberi)
+    const cubeParticleCount = Math.floor(reducedParticleCount * 0.45)
+    const pyramidParticleCount = Math.floor(reducedParticleCount * 0.3)
+    const treeParticleCount = Math.floor((reducedParticleCount - cubeParticleCount - pyramidParticleCount) / 2)  // Metà per ogni albero
+    
+    const totalParticleCount = cubeParticleCount + pyramidParticleCount + (treeParticleCount * 2)
+    const scaleArray = new Float32Array(totalParticleCount)
+    
+    // Colori per le parti della casa
+    const redColor = new THREE.Color(0.8, 0.1, 0.1)  // Rosso per il cubo
+    const blueColor = new THREE.Color(0.1, 0.2, 0.8)  // Blu per il tetto
+    
+    // Genera particelle per il corpo della casa (cubo perfetto) - griglia 3D regolare
+    // La base è orizzontale (poggiata sul terreno) - "seduto" meglio
+    const gridDensity = Math.ceil(Math.cbrt(cubeParticleCount * 1.2))
+    const step = houseSize / (gridDensity - 1)
+    const offset = houseSize / 2
+    const baseY = -houseSize * 0.1  // La base del cubo è leggermente sotto per farlo "sedere" meglio
+    
+    let cubeIndex = 0
+    // Crea una griglia 3D regolare con base orizzontale
+    for (let ix = 0; ix < gridDensity && cubeIndex < cubeParticleCount; ix++) {
+      for (let iy = 0; iy < gridDensity && cubeIndex < cubeParticleCount; iy++) {
+        for (let iz = 0; iz < gridDensity && cubeIndex < cubeParticleCount; iz++) {
+          const x = -offset + ix * step
+          const y = baseY + iy * step  // Base a y=0, si estende verso l'alto
+          const z = -offset + iz * step
+          
+          // Salta i punti che sarebbero nella porta (faccia frontale, centro)
+          const isDoorArea = z > offset - step * 0.5 && 
+                            Math.abs(x) < houseSize * 0.15 && 
+                            y < houseSize * 0.4 && y > baseY
+          
+          if (isDoorArea) continue  // Salta la porta
+          
+          // Includi solo punti sulla superficie o vicino alla superficie
+          const isOnSurface = 
+            Math.abs(x + offset) < step * 0.5 || Math.abs(x - offset) < step * 0.5 ||
+            Math.abs(y - baseY) < step * 0.5 || Math.abs(y - (baseY + houseSize)) < step * 0.5 ||
+            Math.abs(z + offset) < step * 0.5 || Math.abs(z - offset) < step * 0.5
+          
+          if (isOnSurface || Math.random() < 0.3) {
+            housePositions.push(x, y, z)
+            houseColors.push(redColor.r, redColor.g, redColor.b)  // Colore rosso per il cubo
+            scaleArray[cubeIndex] = 0.01
+            cubeIndex++
+          }
+        }
+      }
     }
+    
+    // Aggiungi la porta (cornice scura/nera)
+    const doorWidth = houseSize * 0.25
+    const doorHeight = houseSize * 0.4
+    const doorDepth = step * 2
+    const doorX = 0
+    const doorZ = offset + doorDepth / 2
+    
+    const doorGridDensity = 8
+    const doorStepX = doorWidth / doorGridDensity
+    const doorStepY = doorHeight / doorGridDensity
+    
+    for (let i = 0; i < 20 && cubeIndex < cubeParticleCount; i++) {
+      // Cornice della porta
+      const side = Math.floor(i / 5)
+      let x, y, z
+      
+      switch(side) {
+        case 0: // Lato sinistro
+          x = doorX - doorWidth / 2
+          y = baseY + (i % 5) * doorStepY
+          z = doorZ
+          break
+        case 1: // Lato destro
+          x = doorX + doorWidth / 2
+          y = baseY + (i % 5) * doorStepY
+          z = doorZ
+          break
+        case 2: // Lato superiore
+          x = doorX - doorWidth / 2 + (i % 5) * doorStepX
+          y = baseY + doorHeight
+          z = doorZ
+          break
+        default: // Lato inferiore
+          x = doorX - doorWidth / 2 + (i % 5) * doorStepX
+          y = baseY
+          z = doorZ
+          break
+      }
+      
+      housePositions.push(x, y, z)
+      houseColors.push(0.1, 0.1, 0.1)  // Porta molto scura
+      scaleArray[cubeIndex] = 0.012
+      cubeIndex++
+    }
+    
+    // Genera particelle per la piramide (tetto) - griglia 3D regolare con bordi marcati, più densa
+    const pyramidBaseY = baseY + houseSize  // La piramide inizia sopra il cubo
+    const baseSize = houseSize * 0.98   // Base del tetto quasi uguale al cubo
+    const tipY = pyramidBaseY + pyramidHeight
+    
+    // Calcola griglia per la piramide - più densa
+    const pyramidGridDensity = Math.ceil(Math.sqrt(pyramidParticleCount * 0.8))  // Aumentato da 0.6 a 0.8
+    const baseStep = baseSize / (pyramidGridDensity - 1)
+    const heightStep = pyramidHeight / (pyramidGridDensity - 1)
+    
+    let pyramidIndex = 0
+    
+    // Prima: enfatizza i bordi esterni della piramide (più marcati)
+    const edgeDensity = Math.ceil(pyramidGridDensity * 1.5)
+    
+    // 4 spigoli verticali (dalla base alla punta)
+    for (let i = 0; i < edgeDensity && pyramidIndex < pyramidParticleCount; i++) {
+      const heightRatio = i / (edgeDensity - 1)
+      const y = pyramidBaseY + heightRatio * pyramidHeight
+      const currentBaseSize = baseSize * (1 - heightRatio)
+      
+      // 4 angoli della base che si restringono verso la punta
+      const corners = [
+        [currentBaseSize / 2, 0, currentBaseSize / 2],
+        [-currentBaseSize / 2, 0, currentBaseSize / 2],
+        [currentBaseSize / 2, 0, -currentBaseSize / 2],
+        [-currentBaseSize / 2, 0, -currentBaseSize / 2]
+      ]
+      
+      for (const [cx, cy, cz] of corners) {
+        if (pyramidIndex < pyramidParticleCount) {
+          housePositions.push(cx, y, cz)
+          houseColors.push(blueColor.r, blueColor.g, blueColor.b)  // Colore blu per il tetto
+          scaleArray[cubeParticleCount + pyramidIndex] = 0.015
+          pyramidIndex++
+        }
+      }
+    }
+    
+    // Poi: griglia regolare per le facce della piramide - più densa
+    for (let iy = 0; iy < pyramidGridDensity && pyramidIndex < pyramidParticleCount; iy++) {
+      const heightRatio = iy / (pyramidGridDensity - 1)
+      const y = pyramidBaseY + heightRatio * pyramidHeight
+      const currentBaseSize = baseSize * (1 - heightRatio)
+      const currentStep = currentBaseSize / (pyramidGridDensity - 1)
+      
+      for (let ix = 0; ix < pyramidGridDensity && pyramidIndex < pyramidParticleCount; ix++) {
+        for (let iz = 0; iz < pyramidGridDensity && pyramidIndex < pyramidParticleCount; iz++) {
+          const x = -currentBaseSize / 2 + ix * currentStep
+          const z = -currentBaseSize / 2 + iz * currentStep
+          
+          // Verifica se il punto è dentro la piramide
+          const distX = Math.abs(x) / (currentBaseSize / 2)
+          const distZ = Math.abs(z) / (currentBaseSize / 2)
+          
+          // Includi più punti (aumentato da 0.2 a 0.5 per maggiore densità)
+          const isOnEdge = distX > 0.85 || distZ > 0.85 || heightRatio < 0.1 || heightRatio > 0.9
+          const isOnSurface = Math.abs(distX - 1) < 0.1 || Math.abs(distZ - 1) < 0.1
+          
+          if ((isOnEdge || isOnSurface || Math.random() < 0.5) && distX <= 1 && distZ <= 1) {
+            housePositions.push(x, y, z)
+            houseColors.push(blueColor.r, blueColor.g, blueColor.b)  // Colore blu per il tetto
+            scaleArray[cubeParticleCount + pyramidIndex] = isOnEdge ? 0.015 : 0.01
+            pyramidIndex++
+          }
+        }
+      }
+    }
+    
+    // Genera particelle per gli alberi - uno a destra e uno a sinistra
+    const treeRightX = houseSize * 1.1  // Posizione dell'albero a destra
+    const treeLeftX = -houseSize * 1.1  // Posizione dell'albero a sinistra
+    const treeZ = 0
+    const treeTrunkHeight = houseSize * 0.6
+    const treeTrunkRadius = houseSize * 0.08
+    const treeCrownRadius = houseSize * 0.35  // Chioma più grande
+    const treeCrownY = baseY + treeTrunkHeight
+    const treeCrownCenterY = treeCrownY + treeCrownRadius * 0.5
+    
+    let treeIndex = 0
+    
+    // Funzione helper per creare un albero
+    function createTree(treeX, maxParticles) {
+      let localTreeIndex = 0
+      
+      // Tronco dell'albero (cilindro) - marrone
+      const trunkGridDensity = Math.ceil(Math.sqrt(maxParticles * 0.3))
+      const trunkStepY = treeTrunkHeight / trunkGridDensity
+      const trunkStepR = treeTrunkRadius / trunkGridDensity
+      
+      for (let iy = 0; iy < trunkGridDensity && localTreeIndex < maxParticles; iy++) {
+        const y = baseY + iy * trunkStepY
+        for (let ir = 0; ir < trunkGridDensity && localTreeIndex < maxParticles; ir++) {
+          const r = ir * trunkStepR
+          const angle = Math.random() * Math.PI * 2
+          const x = treeX + Math.cos(angle) * r
+          const z = treeZ + Math.sin(angle) * r
+          
+          housePositions.push(x, y, z)
+          houseColors.push(0.5, 0.3, 0.2)  // Colore marrone più marcato per il tronco
+          scaleArray[cubeParticleCount + pyramidParticleCount + treeIndex + localTreeIndex] = 0.01
+          localTreeIndex++
+        }
+      }
+      
+      // Prima chioma dell'albero (sfera inferiore) - verde più scuro, molto più densa
+      const crownGridDensity = Math.ceil(Math.cbrt(maxParticles * 0.5))
+      const crownStep = treeCrownRadius * 2 / (crownGridDensity - 1)
+      const firstCrownCenterY = treeCrownY + treeCrownRadius * 0.3
+      
+      for (let ix = 0; ix < crownGridDensity && localTreeIndex < maxParticles; ix++) {
+        for (let iy = 0; iy < crownGridDensity && localTreeIndex < maxParticles; iy++) {
+          for (let iz = 0; iz < crownGridDensity && localTreeIndex < maxParticles; iz++) {
+            const x = treeX + (ix - crownGridDensity / 2) * crownStep
+            const y = firstCrownCenterY + (iy - crownGridDensity / 2) * crownStep
+            const z = treeZ + (iz - crownGridDensity / 2) * crownStep
+            
+            const dx = x - treeX
+            const dy = y - firstCrownCenterY
+            const dz = z - treeZ
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz)
+            
+            if (dist <= treeCrownRadius && (dist > treeCrownRadius * 0.6 || Math.random() < 0.7)) {
+              housePositions.push(x, y, z)
+              houseColors.push(0.02, 0.15, 0.02)  // Colore verde ancora più scuro per la chioma
+              scaleArray[cubeParticleCount + pyramidParticleCount + treeIndex + localTreeIndex] = 0.01
+              localTreeIndex++
+            }
+          }
+        }
+      }
+      
+      // Seconda chioma dell'albero (sfera superiore) - verde più scuro, molto più densa
+      const secondCrownRadius = treeCrownRadius * 0.85
+      const secondCrownCenterY = firstCrownCenterY + treeCrownRadius * 0.6
+      const secondCrownStep = secondCrownRadius * 2 / (crownGridDensity - 1)
+      
+      for (let ix = 0; ix < crownGridDensity && localTreeIndex < maxParticles; ix++) {
+        for (let iy = 0; iy < crownGridDensity && localTreeIndex < maxParticles; iy++) {
+          for (let iz = 0; iz < crownGridDensity && localTreeIndex < maxParticles; iz++) {
+            const x = treeX + (ix - crownGridDensity / 2) * secondCrownStep
+            const y = secondCrownCenterY + (iy - crownGridDensity / 2) * secondCrownStep
+            const z = treeZ + (iz - crownGridDensity / 2) * secondCrownStep
+            
+            const dx = x - treeX
+            const dy = y - secondCrownCenterY
+            const dz = z - treeZ
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz)
+            
+            if (dist <= secondCrownRadius && (dist > secondCrownRadius * 0.6 || Math.random() < 0.7)) {
+              housePositions.push(x, y, z)
+              houseColors.push(0.02, 0.15, 0.02)  // Colore verde ancora più scuro per la chioma
+              scaleArray[cubeParticleCount + pyramidParticleCount + treeIndex + localTreeIndex] = 0.01
+              localTreeIndex++
+            }
+          }
+        }
+      }
+      
+      return localTreeIndex
+    }
+    
+    // Crea l'albero a destra
+    const rightTreeParticles = createTree(treeRightX, treeParticleCount)
+    treeIndex += rightTreeParticles
+    
+    // Crea l'albero a sinistra
+    const leftTreeParticles = createTree(treeLeftX, treeParticleCount)
+    treeIndex += leftTreeParticles
 
-    // Crea la geometria della sfera
+    // Crea la geometria della casa
     const geometry = new THREE.BufferGeometry()
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(spherePositions, 3))
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(sphereColors, 3))
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(housePositions, 3))
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(houseColors, 3))
     geometry.setAttribute('aScale', new THREE.BufferAttribute(scaleArray, 1))
     
     // Crea il materiale per le particelle - con colori per vertice
@@ -609,7 +844,7 @@ export const Animate = (url) => {
     
     // Genera posizioni sparse in una sfera più grande per il morph target
     // Mantiene lo stesso numero di particelle ma con distanze maggiori
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < totalParticleCount; i++) {
       const distance = 50  // Distanza dal centro per l'espansione
       
       // Angoli casuali per posizionare le particelle in coordinate sferiche
@@ -641,14 +876,15 @@ export const Animate = (url) => {
     // Scala l'oggetto - ridotta per occupare max 1/4 della pagina
     points.scale.x = points.scale.y = points.scale.z = 1.2
     
-    // Posiziona l'oggetto nella scena
+    // Posiziona l'oggetto nella scena - centrato perfettamente
     points.position.x = 0
-    points.position.y = 0.5
+    points.position.y = 0
     points.position.z = 0
     
-    // Ruota l'oggetto leggermente per una migliore visualizzazione
-    points.rotation.x = Math.PI * 0.1
-    points.rotation.y = Math.PI * 0.05
+    // Nessuna rotazione per non farla sembrare storta - stile Minecraft squadrato
+    points.rotation.x = 0
+    points.rotation.y = 0
+    points.rotation.z = 0
     
     // Salva l'oggetto nella variabile globale
     finalPoints = points
@@ -1157,11 +1393,11 @@ export const Animate = (url) => {
       1000
     )
     
-    // Posiziona la camera (x, y, z)
-    camera.position.set(0, 2, 16)
+    // Posiziona la camera (x, y, z) - più alta per prospettiva verso l'alto
+    camera.position.set(0, 4, 16)
     
-    // Fai guardare la camera verso il centro della scena
-    camera.lookAt(0, 0, 0)
+    // Fai guardare la camera leggermente più in alto
+    camera.lookAt(0, 1, 0)
     
     // Aggiunge la camera alla scena
     scene.add(camera)
@@ -1230,6 +1466,9 @@ export const Animate = (url) => {
     // Permette di usare i tasti per controllare la camera
     controls.listenToKeyEvents(window)
 
+    // Imposta il target leggermente più in alto per prospettiva migliore
+    controls.target.set(0, 1, 0)
+
     // Su dispositivi mobili, abilita il damping (inerzia)
     // Questo dà un senso di "peso" ai movimenti della camera
     if (isMobileDevice()) {
@@ -1250,9 +1489,9 @@ export const Animate = (url) => {
     controls.minDistance = 10
     controls.maxDistance = 100
     
-    // Limita l'angolo polare (impedisce di guardare sopra/sotto troppo)
-    controls.maxPolarAngle = Math.PI * 0.5  // 90 gradi
-    controls.minPolarAngle = Math.PI * 0.5  // 90 gradi (camera orizzontale)
+    // Permetti un po' più di movimento verticale per evitare che il lato destro si alzi durante la rotazione
+    controls.maxPolarAngle = Math.PI * 0.55  // Permette di guardare leggermente più in alto
+    controls.minPolarAngle = Math.PI * 0.45  // Permette di guardare leggermente più in basso
     
     // Abilita la rotazione automatica
     controls.autoRotate = true
@@ -1343,6 +1582,11 @@ export const Animate = (url) => {
    * Questa funzione viene chiamata 60 volte al secondo
    */
   function render() {
+    // Mantieni il target leggermente più in alto per prospettiva migliore
+    if (controls) {
+      controls.target.set(0, 1, 0)
+    }
+    
     // Rotazione dell'oggetto principale (se esiste e la rotazione è abilitata)
     if (finalPoints !== undefined && activateParticleRotation !== false) {
       // Ruota l'oggetto sull'asse Z (sia per GLB che OBJ)
