@@ -1,1 +1,0 @@
-self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/gabrielebaglioni/homeBlock/src/app/layout\":[\"static/media/34b8cd6f73814ef9-s.p.woff2\",\"static/media/92daa4d0098aa288-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"
