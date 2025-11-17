@@ -63,7 +63,7 @@ services:
   web-landing:
     build:
       context: ../..
-      dockerfile: apps/web-landing/Dockerfile
+      dockerfile: infra/docker/Dockerfile.web-landing.dev
     container_name: houseblock-web-landing
     ports:
       - "3000:3000"

@@ -63,13 +63,13 @@ PORT=3001 pnpm dev
 cd apps/web-landing
 
 # Avvia container in background
-docker-compose up -d
+docker compose up -d
 
 # Avvia container in foreground (vedi log)
-docker-compose up
+docker compose up
 
 # Avvia e rebuild
-docker-compose up --build
+docker compose up --build
 ```
 
 **Risultato**: Server su `http://localhost:3000` con hot-reload
@@ -81,41 +81,41 @@ docker-compose up --build
 cd apps/web-landing
 
 # Build e avvio produzione
-docker-compose -f docker-compose.prod.yml up --build
+docker compose -f docker compose.prod.yml up --build
 
 # Solo build
-docker-compose -f docker-compose.prod.yml build
+docker compose -f docker compose.prod.yml build
 
 # Avvio senza rebuild
-docker-compose -f docker-compose.prod.yml up
+docker compose -f docker compose.prod.yml up
 ```
 
 ### Comandi Docker Utili
 
 ```bash
 # Vedi log del container
-docker-compose logs -f web-landing
+docker compose logs -f web-landing
 
 # Vedi log ultime 100 righe
-docker-compose logs --tail=100 web-landing
+docker compose logs --tail=100 web-landing
 
 # Entra nel container
-docker-compose exec web-landing sh
+docker compose exec web-landing sh
 
 # Riavvia container
-docker-compose restart web-landing
+docker compose restart web-landing
 
 # Ferma container
-docker-compose down
+docker compose down
 
 # Ferma e rimuovi volumi
-docker-compose down -v
+docker compose down -v
 
 # Rebuild senza cache
-docker-compose build --no-cache
+docker compose build --no-cache
 
 # Vedi container attivi
-docker-compose ps
+docker compose ps
 
 # Vedi stato container
 docker ps | grep web-landing
@@ -370,9 +370,9 @@ docker run -d \
   -e NODE_ENV=production \
   username/houseblock-web-landing:latest
 
-# Oppure con docker-compose
-# Copia docker-compose.prod.yml sul server
-docker-compose -f docker-compose.prod.yml up -d
+# Oppure con docker compose
+# Copia docker compose.prod.yml sul server
+docker compose -f docker compose.prod.yml up -d
 ```
 
 ### Update Deploy
@@ -414,7 +414,7 @@ PORT=3001 pnpm dev
 docker system prune -a
 
 # Rebuild senza cache
-docker-compose build --no-cache
+docker compose build --no-cache
 
 # Verifica Dockerfile
 docker build -f apps/web-landing/Dockerfile --no-cache .
@@ -424,13 +424,13 @@ docker build -f apps/web-landing/Dockerfile --no-cache .
 
 ```bash
 # Verifica volumi montati
-docker-compose exec web-landing ls -la /app/apps/web-landing
+docker compose exec web-landing ls -la /app/apps/web-landing
 
 # Riavvia container
-docker-compose restart web-landing
+docker compose restart web-landing
 
 # Rebuild
-docker-compose up --build
+docker compose up --build
 ```
 
 ### Vercel build fallisce
@@ -492,7 +492,7 @@ ANALYZE=true pnpm build
 docker stats houseblock-web-landing
 
 # Vedi processi nel container
-docker-compose exec web-landing ps aux
+docker compose exec web-landing ps aux
 ```
 
 ### Log Production
@@ -502,7 +502,7 @@ docker-compose exec web-landing ps aux
 vercel logs [deployment-url]
 
 # Docker
-docker-compose logs -f web-landing
+docker compose logs -f web-landing
 
 # Docker produzione
 docker logs -f houseblock-web-landing-prod
@@ -539,7 +539,7 @@ pnpm --filter web-landing start  # Verifica funziona
 
 # 2. Test Docker produzione locale
 cd apps/web-landing
-docker-compose -f docker-compose.prod.yml up --build
+docker compose -f docker compose.prod.yml up --build
 
 # 3. Push su GitHub (deploy automatico Vercel)
 git push origin master
@@ -599,9 +599,9 @@ rm -rf apps/web-landing/.next
 pnpm install
 
 # Docker reset completo
-docker-compose down -v
+docker compose down -v
 docker system prune -a
-docker-compose up --build
+docker compose up --build
 
 # Vercel reset (se necessario)
 vercel rm --yes

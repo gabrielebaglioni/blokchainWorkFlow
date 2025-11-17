@@ -1,0 +1,26 @@
+# Development Dockerfile for news-scraper-ms
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY services/news-scraper-ms/package.json ./services/news-scraper-ms/
+COPY packages ./packages
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code (will be mounted as volume in docker-compose)
+COPY services/news-scraper-ms ./services/news-scraper-ms
+
+WORKDIR /app/services/news-scraper-ms
+
+EXPOSE 3001
+
+CMD ["pnpm", "dev"]
+

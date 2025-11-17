@@ -125,25 +125,90 @@ Events are consumed by:
 - **trend-analyzer-ms**: Includes articles in trend analysis
 - **knowledge-base-ms**: Stores articles for semantic search
 
-## Local Development
+## Requirements
+
+- Node.js 18+
+- pnpm 8+
+- Docker (opzionale, per containerizzazione)
+- Supabase account (o PostgreSQL locale)
+- Redis (opzionale, per caching)
+
+## Run Locally (pnpm dev)
+
+### Prerequisiti
+
+1. Installa le dipendenze dalla root della monorepo:
+   ```bash
+   pnpm install
+   ```
+
+2. Configura le variabili d'ambiente:
+   ```bash
+   cd services/news-scraper-ms
+   cp .env.example .env
+   # Modifica .env con i tuoi valori
+   ```
+
+### Avvio
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Set up environment
-cp .env.example .env
-# Edit .env with your values
-
-# Run migrations (if needed)
-pnpm migrate
-
-# Start development server
+# Dalla cartella del microservizio
+cd services/news-scraper-ms
 pnpm dev
 
-# Health check
+# Oppure dalla root usando pnpm filter
+pnpm --filter news-scraper-ms dev
+```
+
+Il servizio sarà disponibile su `http://localhost:3001`
+
+### Health Check
+
+```bash
 curl http://localhost:3001/health
 ```
+
+## Run with Docker (dev/prod)
+
+### Sviluppo
+
+```bash
+cd services/news-scraper-ms
+
+# Build dell'immagine dev
+docker build -f Dockerfile.dev -t houseblock/news-scraper-ms-dev .
+
+# Avvio container
+docker run --env-file .env.local -p 3001:3001 houseblock/news-scraper-ms-dev
+```
+
+### Produzione
+
+```bash
+cd services/news-scraper-ms
+
+# Build dell'immagine produzione
+docker build -t houseblock/news-scraper-ms .
+
+# Avvio container
+docker run --env-file .env.production -p 3001:3001 houseblock/news-scraper-ms
+```
+
+## Environment Variables (.env.example)
+
+Copia `.env.example` in `.env` e configura:
+
+- `PORT`: Porta del servizio (default: 3001)
+- `NODE_ENV`: Ambiente (development/production)
+- `SUPABASE_URL`: URL del progetto Supabase
+- `SUPABASE_ANON_KEY`: Chiave anonima Supabase
+- `SUPABASE_SERVICE_ROLE_KEY`: Chiave service role Supabase
+- `REDIS_HOST`: Host Redis (opzionale)
+- `REDIS_PORT`: Porta Redis (opzionale)
+- `N8N_WEBHOOK_URL`: URL webhook n8n per pubblicare eventi
+- `RSS_SOURCES`: URL RSS sources (comma-separated)
+
+Vedi `.env.example` per la lista completa.
 
 ## Deployment
 
@@ -151,4 +216,6 @@ curl http://localhost:3001/health
 - Health check endpoint required for orchestration
 - Environment variables must be configured
 - Database migrations run on startup
+
+Vedi [DEPLOY.md](../../DEPLOY.md) per dettagli completi sul deploy.
 

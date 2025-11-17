@@ -61,3 +61,89 @@ Publishes to n8n:
 }
 ```
 
+
+## Requirements
+
+- Node.js 18+
+- pnpm 8+
+- Docker (opzionale, per containerizzazione)
+- Supabase account (o PostgreSQL locale)
+- Redis (opzionale, per caching)
+
+## Run Locally (pnpm dev)
+
+### Prerequisiti
+
+1. Installa le dipendenze dalla root della monorepo:
+   ```bash
+   pnpm install
+   ```
+
+2. Configura le variabili d'ambiente:
+   ```bash
+   cd services/social-publisher-ms
+   cp .env.example .env
+   # Modifica .env con i tuoi valori
+   ```
+
+### Avvio
+
+```bash
+# Dalla cartella del microservizio
+cd services/social-publisher-ms
+pnpm dev
+
+# Oppure dalla root usando pnpm filter
+pnpm --filter social-publisher-ms dev
+```
+
+Il servizio sarà disponibile su `http://localhost:3010
+6379`
+
+### Health Check
+
+```bash
+curl http://localhost:3010
+6379/health
+```
+
+## Run with Docker (dev/prod)
+
+### Sviluppo
+
+```bash
+cd services/social-publisher-ms
+
+# Build dell'immagine dev
+docker build -f Dockerfile.dev -t houseblock/social-publisher-ms-dev .
+
+# Avvio container
+docker run --env-file .env.local -p 3010
+6379:3010
+6379 houseblock/social-publisher-ms-dev
+```
+
+### Produzione
+
+```bash
+cd services/social-publisher-ms
+
+# Build dell'immagine produzione
+docker build -t houseblock/social-publisher-ms .
+
+# Avvio container
+docker run --env-file .env.production -p 3010
+6379:3010
+6379 houseblock/social-publisher-ms
+```
+
+## Environment Variables (.env.example)
+
+Copia `.env.example` in `.env` e configura le variabili necessarie. Vedi `.env.example` per la lista completa.
+
+## API Endpoints
+
+- `GET /health` - Health check endpoint
+- Altri endpoint da implementare (vedi TODO.md)
+
+Vedi [COMMANDS.md](../../COMMANDS.md) per comandi completi e [DEPLOY.md](../../DEPLOY.md) per dettagli sul deploy.

@@ -160,7 +160,7 @@ Each microservice is **100% independent**:
 
 ```bash
 git clone <repository-url>
-cd houseblock
+cd homeBlock
 ```
 
 2. **Install dependencies**
@@ -180,52 +180,193 @@ cp .env.example .env
 # - Social media API keys
 ```
 
-4. **Start infrastructure services**
+## Come Avviare la Landing in Locale
+
+### Opzione 1: Senza Docker (consigliato per sviluppo)
 
 ```bash
-cd infra/docker
-docker-compose up -d
-```
+# Dalla root della monorepo
+pnpm --filter web-landing dev
 
-This starts:
-- Redis (port 6379)
-- PostgreSQL (port 5432) - for local dev only
-- n8n (port 5678)
-
-5. **Start a microservice**
-
-```bash
-# Example: Start news-scraper-ms
-cd services/news-scraper-ms
-pnpm install
-cp .env.example .env
-# Edit .env with service-specific config
-pnpm dev
-```
-
-6. **Start the web landing app**
-
-```bash
+# Oppure dalla cartella dell'app
 cd apps/web-landing
-pnpm install
 pnpm dev
 ```
 
-Access at `http://localhost:3000`
+L'app sarà disponibile su `http://localhost:3000`
 
-### Docker Compose Setup
-
-For a complete local environment:
+### Opzione 2: Con Docker
 
 ```bash
-# Start all infrastructure
-docker-compose -f infra/docker/docker-compose.yml up -d
+# Avvia infrastruttura + web-landing
+docker compose -f infra/docker/docker-compose.dev.yml up -d
 
-# Check services
-docker-compose -f infra/docker/docker-compose.yml ps
+# Oppure solo web-landing
+docker compose -f infra/docker/docker-compose.dev.yml up -d web-landing
+```
 
-# View logs
-docker-compose -f infra/docker/docker-compose.yml logs -f
+Vedi [COMMANDS.md](./COMMANDS.md) per dettagli completi.
+
+## Come Avviare i Microservizi in Locale
+
+### Prerequisiti
+
+1. Assicurati di aver installato le dipendenze dalla root:
+   ```bash
+   pnpm install
+   ```
+
+2. Configura le variabili d'ambiente per ogni microservizio:
+   ```bash
+   cd services/<ms-name>
+   cp .env.example .env
+   # Modifica .env con i tuoi valori
+   ```
+
+### Avvio Microservizio
+
+```bash
+# Dalla cartella del microservizio
+cd services/news-scraper-ms
+pnpm dev
+
+# Oppure dalla root usando pnpm filter
+pnpm --filter news-scraper-ms dev
+```
+
+### Porte dei Microservizi
+
+| Microservizio | Porta | Health Check |
+|---------------|-------|--------------|
+| `news-scraper-ms` | 3001 | `http://localhost:3001/health` |
+| `sentiment-tracker-ms` | 3002 | `http://localhost:3002/health` |
+| `onchain-monitor-ms` | 3003 | `http://localhost:3003/health` |
+| `trend-analyzer-ms` | 3004 | `http://localhost:3004/health` |
+| `opportunity-detector-ms` | 3005 | `http://localhost:3005/health` |
+| `competitor-watchdog-ms` | 3006 | `http://localhost:3006/health` |
+| `ai-content-engine-ms` | 3007 | `http://localhost:3007/health` |
+| `visual-generator-ms` | 3008 | `http://localhost:3008/health` |
+| `video-generator-ms` | 3009 | `http://localhost:3009/health` |
+| `social-publisher-ms` | 3010 | `http://localhost:3010/health` |
+| `knowledge-base-ms` | 3011 | `http://localhost:3011/health` |
+| `telemetry-logger-ms` | 3012 | `http://localhost:3012/health` |
+
+Vedi [COMMANDS.md](./COMMANDS.md) per comandi completi e dettagli.
+
+## Come Avviare l'Infrastruttura Docker (dev/prod)
+
+### Sviluppo
+
+Avvia tutta l'infrastruttura di sviluppo (Redis, Postgres, n8n, web-landing):
+
+```bash
+# Dalla root
+docker compose -f infra/docker/docker-compose.dev.yml up -d
+
+# Visualizza log
+docker compose -f infra/docker/docker-compose.dev.yml logs -f
+
+# Ferma tutto
+docker compose -f infra/docker/docker-compose.dev.yml down
+```
+
+### Produzione
+
+```bash
+# Dalla root
+docker compose -f infra/docker/docker-compose.prod.yml up -d
+```
+
+### Servizi Disponibili
+
+- **Redis:** `localhost:6379`
+- **PostgreSQL:** `localhost:5432` (solo per dev locale, produzione usa Supabase)
+- **n8n:** `http://localhost:5678`
+- **Web Landing:** `http://localhost:3000`
+
+Vedi [COMMANDS.md](./COMMANDS.md) per dettagli completi.
+
+## Come Deployare su Vercel
+
+### Web Landing
+
+1. **Collega il repository** a Vercel
+2. **Configura il progetto:**
+   - **Root Directory:** `apps/web-landing`
+   - **Build Command:** `pnpm install && pnpm --filter web-landing build`
+   - **Output Directory:** `.next`
+   - **Install Command:** `pnpm install`
+   - **Framework:** Next.js
+
+3. **Aggiungi variabili d'ambiente** se necessarie
+
+4. **Deploy automatico** ad ogni push sul branch principale
+
+Il file `apps/web-landing/vercel.json` è già configurato.
+
+Vedi [DEPLOY.md](./DEPLOY.md) per dettagli completi.
+
+## Come Deployare su VPS/Hostinger
+
+### n8n
+
+```bash
+# Sul server VPS
+git clone <repository-url> /opt/houseblock
+cd /opt/houseblock/infra/docker
+
+# Avvia n8n
+docker compose -f docker-compose.prod.yml up -d n8n
+```
+
+Accesso: `http://your-server-ip:5678`
+
+### Microservizi
+
+```bash
+# Deploy singolo microservizio
+cd /opt/houseblock/services/<ms-name>
+docker build -t houseblock/<ms-name> .
+docker run -d \
+  --name houseblock-<ms-name> \
+  --env-file .env.production \
+  -p <PORT>:<PORT> \
+  --restart unless-stopped \
+  houseblock/<ms-name>
+```
+
+### Stack Completo
+
+```bash
+# Avvia tutto lo stack
+cd /opt/houseblock/infra/docker
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Vedi [DEPLOY.md](./DEPLOY.md) per guida completa al deploy.
+
+### Quick Start Scripts
+
+Dalla root della monorepo, puoi usare questi script:
+
+```bash
+# Sviluppo web landing
+pnpm dev:web
+
+# Avvia infrastruttura Docker (dev)
+pnpm dev:services
+
+# Avvia tutto (infrastruttura + web landing)
+pnpm dev:all
+
+# Build di tutti i package
+pnpm build:all
+
+# Docker compose dev
+pnpm docker:dev
+
+# Docker compose prod
+pnpm docker:prod
 ```
 
 ### Database Setup
@@ -399,13 +540,20 @@ Workflows are stored in `infra/n8n/workflows/`:
 - `output-to-publish.json`: Routes content to publisher
 - `error-handler.json`: Centralized error handling
 
+## Documentazione Aggiuntiva
+
+- **[COMMANDS.md](./COMMANDS.md)** - Guida completa ai comandi di lancio
+- **[DEPLOY.md](./DEPLOY.md)** - Guida al deploy su Vercel e VPS/Hostinger
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Linee guida per contribuire
+- **[TODO.md](./TODO.md)** - Roadmap di sviluppo
+
 ## Development
 
 ### Adding a New Microservice
 
 1. Create directory: `services/my-new-ms/`
 2. Initialize package: `pnpm init`
-3. Create structure: `src/`, `__tests__/`, `README.md`, `TODO.md`
+3. Create structure: `src/`, `__tests__/`, `README.md`, `TODO.md`, `Dockerfile`, `.env.example`
 4. Implement service following independence rules
 5. Add to workspace (automatic if in `services/`)
 6. Create n8n workflow in `infra/n8n/workflows/`
@@ -416,7 +564,7 @@ See `CONTRIBUTING.md` for detailed guidelines.
 
 ```bash
 # Start infrastructure
-docker-compose -f infra/docker/docker-compose.yml up -d
+docker compose -f infra/docker/docker-compose.dev.yml up -d
 
 # Start a service
 cd services/news-scraper-ms
