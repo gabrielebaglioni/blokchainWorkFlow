@@ -4,7 +4,6 @@
   "devCommand": "cd apps/web-landing && pnpm dev",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "rootDirectory": "apps/web-landing",
   "outputDirectory": "apps/web-landing/.next"
 }
 
