@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": "cd apps/web-landing && pnpm install && pnpm build",
+  "devCommand": "cd apps/web-landing && pnpm dev",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "rootDirectory": "apps/web-landing",
+  "outputDirectory": "apps/web-landing/.next"
+}
+
