@@ -1,0 +1,4 @@
+# Ignora tutto tranne questa cartella
+../../
+!apps/web-landing/**
+
