@@ -1,0 +1,26 @@
+# Dockerfile per sviluppo isolato - web-landing
+# Ambiente identico a produzione ma per sviluppo locale
+
+FROM node:20-alpine
+
+# Installa dipendenze sistema
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Abilita pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
+# Copia file di configurazione
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY apps/web-landing/package.json ./apps/web-landing/
+
+# Installa dipendenze
+RUN pnpm install --frozen-lockfile
+
+# Esponi porta
+EXPOSE 3000
+
+# Comando di default (può essere sovrascritto da docker-compose)
+CMD ["pnpm", "--filter", "web-landing", "dev"]
+

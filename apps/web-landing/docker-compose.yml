@@ -1,0 +1,35 @@
+# Docker Compose per sviluppo isolato di web-landing
+# Ambiente identico a produzione per test locale
+
+services:
+  web-landing:
+    build:
+      context: ../..
+      dockerfile: apps/web-landing/Dockerfile.dev
+    container_name: houseblock-web-landing-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    volumes:
+      # Mount del codice per hot-reload
+      - ../../apps/web-landing:/app/apps/web-landing
+      - ../../packages:/app/packages
+      - ../../pnpm-workspace.yaml:/app/pnpm-workspace.yaml
+      - ../../package.json:/app/package.json
+      - ../../pnpm-lock.yaml:/app/pnpm-lock.yaml
+      # Escludi node_modules locali, usa quelli del container
+      - /app/node_modules
+      - /app/apps/web-landing/node_modules
+      - /app/apps/web-landing/.next
+    working_dir: /app
+    command: pnpm --filter web-landing dev
+    restart: unless-stopped
+    networks:
+      - houseblock-network
+
+networks:
+  houseblock-network:
+    driver: bridge
+
