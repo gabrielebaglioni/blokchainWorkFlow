@@ -5,6 +5,7 @@ import Link from "../../components/Link"
 import ContentBlock from "../../components/page/Content"
 import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
 import SilvicultureSocietyMembers from "../../components/silviculture-society-members/SilvicultureSociety"
+import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
 const SilvicultureSociety = () => {
   useEffect(() => {
@@ -31,15 +32,12 @@ const SilvicultureSociety = () => {
         </p>
 
         <Link href="/future" id="next-navigation">
-          <object
-            data="/assets/double-spirale-white.svg"
-            width="50"
-            height="50"
-            aria-labelledby="Next"
-          >
-            {" "}
-            Next
-          </object>
+          <DoubleSpiraleIcon
+            variant="white"
+            width={50}
+            height={50}
+            ariaLabel="Next"
+          />
           <span> Future of the house: experiments and collaborations </span>
         </Link>
       </div>

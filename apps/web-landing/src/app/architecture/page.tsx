@@ -3,6 +3,7 @@ import React, { useEffect } from "react"
 import Link from "../../components/Link"
 import ContentBlock from "../../components/page/Content"
 import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
+import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
 const Philosophy = (props: any) => {
   useEffect(() => {
@@ -26,15 +27,12 @@ const Philosophy = (props: any) => {
         </p>
 
         <Link href="/input-layer" id="next-navigation">
-          <object
-            data="/assets/double-spirale-white.svg"
-            width="50"
-            height="50"
-            aria-labelledby="Next"
-          >
-            {" "}
-            Next
-          </object>
+          <DoubleSpiraleIcon
+            variant="white"
+            width={50}
+            height={50}
+            ariaLabel="Next"
+          />
           <span> Input Layer: listening to Web3 </span>
         </Link>
       </div>

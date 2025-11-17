@@ -4,6 +4,7 @@ import React, { useEffect } from "react"
 import Link from "../../components/Link"
 import ContentBlock from "../../components/page/Content"
 import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
+import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
 const ConflictOfInterestPolicyPage = () => {
   useEffect(() => {
@@ -57,15 +58,12 @@ const ConflictOfInterestPolicyPage = () => {
         </p>
 
         <Link href="/" id="next-navigation">
-          <object
-            data="/assets/double-spirale-white.svg"
-            width="50"
-            height="50"
-            aria-labelledby="Next"
-          >
-            {" "}
-            Next
-          </object>
+          <DoubleSpiraleIcon
+            variant="white"
+            width={50}
+            height={50}
+            ariaLabel="Next"
+          />
           <span> Back Home </span>
         </Link>
       </div>

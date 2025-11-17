@@ -3,6 +3,7 @@ import React, { useEffect } from "react"
 import Link from "../components/Link"
 import ContentBlock from "../components/page/Content"
 import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
+import { DoubleSpiraleIcon } from "../components/icons/DoubleSpiraleIcon"
 
 const HomePage = () => {
   useEffect(() => {
@@ -23,15 +24,12 @@ const HomePage = () => {
           At the center is a pseudonymous identity, HouseBlock, that observes, interprets, and tells stories. Everything that gets published – posts, threads, images, experiments – is the result of a microservices ecosystem working in the background, like an automatic house that never stops growing.
         </p>
         <Link href="/why-exists" id="next-navigation">
-          <object
-            data="/assets/double-spirale.svg"
-            width="50"
-            height="50"
-            aria-labelledby="Next"
-          >
-            {" "}
-            Next
-          </object>
+          <DoubleSpiraleIcon
+            variant="default"
+            width={50}
+            height={50}
+            ariaLabel="Next"
+          />
           <span> Click to explore </span>
         </Link>
       </div>

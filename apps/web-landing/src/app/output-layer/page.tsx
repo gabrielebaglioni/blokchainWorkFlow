@@ -2,6 +2,7 @@
 import React from "react"
 import Link from "../../components/Link"
 import ContentBlock from "../../components/page/Content"
+import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
 const EthereumFoundation = (props: any) => {
   return (
@@ -24,15 +25,12 @@ const EthereumFoundation = (props: any) => {
         </p>
 
         <Link href="/publishing" id="next-navigation">
-          <object
-            data="/assets/double-spirale-white.svg"
-            width="50"
-            height="50"
-            aria-labelledby="Next"
-          >
-            {" "}
-            Next
-          </object>
+          <DoubleSpiraleIcon
+            variant="white"
+            width={50}
+            height={50}
+            ariaLabel="Next"
+          />
           <span>Publishing, social, and dashboard</span>
         </Link>
       </div>

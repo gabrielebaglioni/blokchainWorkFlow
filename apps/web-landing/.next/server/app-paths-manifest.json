@@ -1,10 +1,10 @@
 {
   "/_not-found": "app/_not-found.js",
   "/ai-layer/page": "app/ai-layer/page.js",
-  "/architecture/page": "app/architecture/page.js",
   "/contact/page": "app/contact/page.js",
-  "/identity/page": "app/identity/page.js",
+  "/architecture/page": "app/architecture/page.js",
   "/future/page": "app/future/page.js",
+  "/identity/page": "app/identity/page.js",
   "/input-layer/page": "app/input-layer/page.js",
   "/output-layer/page": "app/output-layer/page.js",
   "/page": "app/page.js",
