@@ -59,8 +59,32 @@ services:
       postgres:
         condition: service_healthy
 
+  # Web Landing (sviluppo)
+  web-landing:
+    build:
+      context: ../..
+      dockerfile: apps/web-landing/Dockerfile
+    container_name: houseblock-web-landing
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ../../apps/web-landing:/app/apps/web-landing
+      - ../../packages:/app/packages
+      - /app/apps/web-landing/node_modules
+      - /app/apps/web-landing/.next
+    command: pnpm --filter web-landing dev
+    restart: unless-stopped
+    networks:
+      - houseblock-network
+
 volumes:
   redis-data:
   postgres-data:
   n8n-data:
+
+networks:
+  houseblock-network:
+    driver: bridge
 

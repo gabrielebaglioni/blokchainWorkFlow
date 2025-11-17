@@ -55,7 +55,7 @@ const ContentBlock = (props: ContentBlockProps) => {
       // React strict mode will call this twice in succession in dev mode (to test for side effects), this prevents executing animations twice in that scenario
       animationRan.current = true
       const cleanup = animate(normalizedPathname)
-      cleanupRef.current = cleanup
+      cleanupRef.current = cleanup as (() => void) | null
       
       return () => {
         if (cleanup) {

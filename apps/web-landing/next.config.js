@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  // Abilita output standalone per Docker
+  output: 'standalone',
   webpack: (config, { webpack }) => {
     return {
       ...config,
