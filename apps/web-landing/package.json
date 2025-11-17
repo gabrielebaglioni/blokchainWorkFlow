@@ -24,6 +24,7 @@
     "three": "^0.146.0",
     "typescript": "4.9.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
 }
-

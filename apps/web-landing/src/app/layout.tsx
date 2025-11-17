@@ -35,12 +35,14 @@ const RootLayout = ({ children }: { children: React.ReactElement }) => {
     <html
       lang="en"
       className={`${fontPrimary.variable} ${fontSecondary.variable}`}
+      suppressHydrationWarning
     >
       <body
         id={pathname === "/" ? "home" : ""}
         className={`${
           scrollDirection === ScrollDirection.UP ? "" : "content-scrolled"
         }`}
+        suppressHydrationWarning
       >
         <AnimationContext.Provider
           value={{ animationIsLoading, setAnimationIsLoading }}

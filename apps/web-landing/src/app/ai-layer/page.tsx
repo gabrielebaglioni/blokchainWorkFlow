@@ -5,7 +5,7 @@ import ContentBlock from "../../components/page/Content"
 import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
 import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
-const Ethereum = (props: any) => {
+const AILayer = (props: any) => {
   useEffect(() => {
     loadAndCacheTexture("/identity")
   }, [])
@@ -47,4 +47,4 @@ const Ethereum = (props: any) => {
   )
 }
 
-export default Ethereum
+export default AILayer

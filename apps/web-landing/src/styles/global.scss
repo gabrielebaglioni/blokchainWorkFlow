@@ -345,12 +345,24 @@ main a:hover {
   .loader-wrapper {
     width: 120px;
     height: 120px;
-    background: url(assets/ETH-loading.svg) no-repeat center;
+    background: url(assets/houseblock-loading.svg) no-repeat center;
     background-size: contain;
     position: relative;
     
     // Ombra leggera per profondità
     filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.1));
+    
+    // Animazione di rotazione continua
+    animation: rotateLoader 3s linear infinite;
+  }
+  
+  @keyframes rotateLoader {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 }
 

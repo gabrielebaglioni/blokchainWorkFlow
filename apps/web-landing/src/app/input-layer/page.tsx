@@ -6,7 +6,7 @@ import Image from "next/image"
 import { loadAndCacheTexture } from "components/page/animation/loaders/textureLoader"
 import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
-const EthereumFoundation = (props: any) => {
+const InputLayer = (props: any) => {
   useEffect(() => {
     loadAndCacheTexture("/architecture")
   }, [])
@@ -44,4 +44,4 @@ const EthereumFoundation = (props: any) => {
   )
 }
 
-export default EthereumFoundation
+export default InputLayer

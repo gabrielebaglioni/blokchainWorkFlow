@@ -4,7 +4,7 @@ import Link from "../../components/Link"
 import ContentBlock from "../../components/page/Content"
 import { DoubleSpiraleIcon } from "../../components/icons/DoubleSpiraleIcon"
 
-const EthereumFoundation = (props: any) => {
+const OutputLayer = (props: any) => {
   return (
     <ContentBlock>
       <div id="content-body" className="disable--selection">
@@ -38,4 +38,4 @@ const EthereumFoundation = (props: any) => {
   )
 }
 
-export default EthereumFoundation
+export default OutputLayer
