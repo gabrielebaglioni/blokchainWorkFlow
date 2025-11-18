@@ -1,0 +1,26 @@
+# Development Dockerfile for video-generator-ms
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY services/content-layer/video-generator-ms/package.json ./services/content-layer/video-generator-ms/
+COPY packages ./packages
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code (will be mounted as volume in docker-compose)
+COPY services/content-layer/video-generator-ms ./services/content-layer/video-generator-ms
+
+WORKDIR /app/services/content-layer/video-generator-ms
+
+EXPOSE 3009
+6379
+
+CMD ["pnpm", "dev"]

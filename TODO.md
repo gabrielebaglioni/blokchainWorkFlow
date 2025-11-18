@@ -84,7 +84,7 @@ All shared packages live in `/packages/` directory.
 2. **Infrastructure Services**
    ```bash
    # Start Docker services (Postgres, Redis, etc.)
-   docker-compose -f infra/docker/docker-compose.yml up -d
+   docker-compose -f infra/houseblockDocker/docker-compose.yml up -d
    ```
 
 3. **Database Setup**

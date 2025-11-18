@@ -150,11 +150,11 @@ Each microservice is **100% independent**:
 ### Prerequisites
 
 - Node.js 18+
-- pnpm 8+
+- pnpm 8+ (install with `corepack enable && corepack prepare pnpm@8.15.0 --activate`)
 - Docker and Docker Compose
 - Supabase account (or local PostgreSQL)
 
-### Local Setup
+### Installation
 
 1. **Clone the repository**
 
@@ -169,6 +169,8 @@ cd homeBlock
 pnpm install
 ```
 
+This will install all dependencies for apps, services, and packages in the monorepo.
+
 3. **Configure environment**
 
 ```bash
@@ -180,61 +182,168 @@ cp .env.example .env
 # - Social media API keys
 ```
 
-## Come Avviare la Landing in Locale
+## Development Commands
 
-### Opzione 1: Senza Docker (consigliato per sviluppo)
+### Web Landing Development
+
+**Option 1: Without Docker (recommended for development)**
 
 ```bash
-# Dalla root della monorepo
+# From monorepo root
+pnpm dev
+# or
 pnpm --filter web-landing dev
 
-# Oppure dalla cartella dell'app
+# Or from app directory
 cd apps/web-landing
 pnpm dev
 ```
 
-L'app sarà disponibile su `http://localhost:3000`
+The app will be available at `http://localhost:3000`
 
-### Opzione 2: Con Docker
+**Option 2: With Docker**
 
 ```bash
-# Avvia infrastruttura + web-landing
-docker compose -f infra/docker/docker-compose.dev.yml up -d
+# Start infrastructure + web-landing
+pnpm docker:dev
 
-# Oppure solo web-landing
-docker compose -f infra/docker/docker-compose.dev.yml up -d web-landing
+# Or only web-landing
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up -d web-landing
+
+# View logs
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml logs -f web-landing
 ```
 
-Vedi [COMMANDS.md](./COMMANDS.md) per dettagli completi.
+### Microservices Development
 
-## Come Avviare i Microservizi in Locale
-
-### Prerequisiti
-
-1. Assicurati di aver installato le dipendenze dalla root:
-   ```bash
-   pnpm install
-   ```
-
-2. Configura le variabili d'ambiente per ogni microservizio:
-   ```bash
-   cd services/<ms-name>
-   cp .env.example .env
-   # Modifica .env con i tuoi valori
-   ```
-
-### Avvio Microservizio
+**Start a single microservice:**
 
 ```bash
-# Dalla cartella del microservizio
-cd services/news-scraper-ms
-pnpm dev
-
-# Oppure dalla root usando pnpm filter
+# From monorepo root
 pnpm --filter news-scraper-ms dev
+
+# Or from service directory
+cd services/input-layer/news-scraper-ms
+pnpm dev
 ```
 
-### Porte dei Microservizi
+**Start all microservices with Docker:**
+
+```bash
+# Start all 12 microservices + infrastructure
+pnpm docker:services
+
+# Or manually
+docker compose -f infra/houseblockDocker/docker-compose.services.yml up -d
+```
+
+**Start everything (infrastructure + web-landing):**
+
+```bash
+pnpm dev:all
+```
+
+This starts:
+- Redis (port 6379)
+- PostgreSQL (port 5432)
+- n8n (port 5678)
+- Web Landing (port 3000)
+- All 12 microservices (ports 3001-3012)
+
+See [COMMANDS.md](./COMMANDS.md) for complete command reference.
+
+## Build Commands
+
+### Build All Packages
+
+```bash
+# Build all apps, services, and packages
+pnpm build
+# or
+pnpm build:all
+```
+
+### Build Specific Package
+
+```bash
+# Build web-landing only
+pnpm build:web
+# or
+pnpm --filter web-landing build
+
+# Build specific microservice
+pnpm --filter news-scraper-ms build
+```
+
+### Build for Production
+
+```bash
+# Build web-landing for production
+cd apps/web-landing
+pnpm build
+
+# Build microservice for production
+cd services/input-layer/news-scraper-ms
+pnpm build
+```
+
+## Docker Commands
+
+### Development Environment
+
+Start development infrastructure (Redis, Postgres, n8n, web-landing):
+
+```bash
+# From root
+pnpm docker:dev
+# or
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up -d
+
+# View logs
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml logs -f
+
+# Stop all
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml down
+```
+
+### Production Environment
+
+```bash
+# From root
+pnpm docker:prod
+# or
+docker compose -f infra/houseblockDocker/docker-compose.prod.yml up -d
+```
+
+### Microservices Only
+
+Start all 12 microservices with infrastructure:
+
+```bash
+# From root
+pnpm docker:services
+# or
+docker compose -f infra/houseblockDocker/docker-compose.services.yml up -d
+```
+
+### n8n Only (for Hostinger deployment)
+
+```bash
+# From root
+pnpm docker:n8n
+# or
+docker compose -f infra/houseblockDocker/docker-compose.n8n.yml up -d
+```
+
+### Available Services
+
+- **Redis:** `localhost:6379`
+- **PostgreSQL:** `localhost:5432` (dev only, production uses Supabase)
+- **n8n:** `http://localhost:5678`
+- **Web Landing:** `http://localhost:3000`
+- **Microservices:** `localhost:3001-3012` (see port table below)
+
+### Microservice Ports
 
 | Microservizio | Porta | Health Check |
 |---------------|-------|--------------|
@@ -251,99 +360,160 @@ pnpm --filter news-scraper-ms dev
 | `knowledge-base-ms` | 3011 | `http://localhost:3011/health` |
 | `telemetry-logger-ms` | 3012 | `http://localhost:3012/health` |
 
-Vedi [COMMANDS.md](./COMMANDS.md) per comandi completi e dettagli.
+See [COMMANDS.md](./COMMANDS.md) for complete command reference.
 
-## Come Avviare l'Infrastruttura Docker (dev/prod)
+## Deployment
 
-### Sviluppo
+### Deploy Web Landing to Vercel
 
-Avvia tutta l'infrastruttura di sviluppo (Redis, Postgres, n8n, web-landing):
+**Prerequisites:**
+- Vercel account
+- GitHub repository connected
 
-```bash
-# Dalla root
-docker compose -f infra/docker/docker-compose.dev.yml up -d
+**Steps:**
 
-# Visualizza log
-docker compose -f infra/docker/docker-compose.dev.yml logs -f
+1. **Connect repository to Vercel**
+   - Go to Vercel Dashboard → Add New Project
+   - Import your GitHub repository
 
-# Ferma tutto
-docker compose -f infra/docker/docker-compose.dev.yml down
-```
-
-### Produzione
-
-```bash
-# Dalla root
-docker compose -f infra/docker/docker-compose.prod.yml up -d
-```
-
-### Servizi Disponibili
-
-- **Redis:** `localhost:6379`
-- **PostgreSQL:** `localhost:5432` (solo per dev locale, produzione usa Supabase)
-- **n8n:** `http://localhost:5678`
-- **Web Landing:** `http://localhost:3000`
-
-Vedi [COMMANDS.md](./COMMANDS.md) per dettagli completi.
-
-## Come Deployare su Vercel
-
-### Web Landing
-
-1. **Collega il repository** a Vercel
-2. **Configura il progetto:**
+2. **Configure project settings:**
    - **Root Directory:** `apps/web-landing`
    - **Build Command:** `pnpm install && pnpm --filter web-landing build`
    - **Output Directory:** `.next`
    - **Install Command:** `pnpm install`
-   - **Framework:** Next.js
+   - **Framework Preset:** Next.js
 
-3. **Aggiungi variabili d'ambiente** se necessarie
+3. **Environment Variables** (if needed):
+   - Add any required environment variables in Vercel dashboard
+   - Variables are automatically available during build
 
-4. **Deploy automatico** ad ogni push sul branch principale
+4. **Deploy:**
+   - Automatic deployment on every push to main branch
+   - Or manually trigger from Vercel dashboard
 
-Il file `apps/web-landing/vercel.json` è già configurato.
+The file `apps/web-landing/vercel.json` is already configured with the correct settings.
 
-Vedi [DEPLOY.md](./DEPLOY.md) per dettagli completi.
+**Note:** Docker is not needed for Vercel deployment. Vercel uses serverless functions and handles the build process automatically.
 
-## Come Deployare su VPS/Hostinger
+See [DEPLOY.md](./DEPLOY.md) for detailed deployment guide.
 
-### n8n
+### Deploy Microservices to VPS/Hostinger
+
+**Prerequisites:**
+- VPS with Docker and Docker Compose installed
+- Domain name (optional, for production)
+- Environment variables configured
+
+**Option 1: Deploy All Services Together**
 
 ```bash
-# Sul server VPS
+# On VPS server
 git clone <repository-url> /opt/houseblock
-cd /opt/houseblock/infra/docker
+cd /opt/houseblock/infra/houseblockDocker
 
-# Avvia n8n
-docker compose -f docker-compose.prod.yml up -d n8n
+# Copy and configure environment
+cp ../../.env.example ../../.env
+# Edit .env with production values
+
+# Start all microservices
+docker compose -f docker-compose.services.yml up -d
+
+# View logs
+docker compose -f docker-compose.services.yml logs -f
 ```
 
-Accesso: `http://your-server-ip:5678`
-
-### Microservizi
+**Option 2: Deploy Single Microservice**
 
 ```bash
-# Deploy singolo microservizio
-cd /opt/houseblock/services/<ms-name>
-docker build -t houseblock/<ms-name> .
+# On VPS server
+cd /opt/houseblock/services/input-layer/news-scraper-ms
+
+# Build production image
+docker build -f Dockerfile -t houseblock/news-scraper-ms:latest .
+
+# Run container
 docker run -d \
-  --name houseblock-<ms-name> \
+  --name houseblock-news-scraper-ms \
   --env-file .env.production \
-  -p <PORT>:<PORT> \
+  -p 3001:3001 \
   --restart unless-stopped \
-  houseblock/<ms-name>
+  --network houseblock-services-network \
+  houseblock/news-scraper-ms:latest
 ```
 
-### Stack Completo
+**Production Considerations:**
+- Use reverse proxy (nginx/traefik) for HTTPS
+- Configure firewall rules
+- Set up monitoring and logging
+- Use Docker secrets for sensitive data
+- Configure health checks
 
+### Deploy n8n to Hostinger
+
+**Prerequisites:**
+- Hostinger VPS with Docker
+- Domain name (optional)
+
+**Steps:**
+
+1. **Clone repository on server:**
 ```bash
-# Avvia tutto lo stack
-cd /opt/houseblock/infra/docker
-docker compose -f docker-compose.prod.yml up -d
+git clone <repository-url> /opt/houseblock
+cd /opt/houseblock/infra/houseblockDocker
 ```
 
-Vedi [DEPLOY.md](./DEPLOY.md) per guida completa al deploy.
+2. **Configure environment:**
+```bash
+# Create .env file with n8n configuration
+cat > .env << EOF
+POSTGRES_USER=n8n
+POSTGRES_PASSWORD=<strong-password>
+POSTGRES_DB=n8n
+N8N_BASIC_AUTH_USER=admin
+N8N_BASIC_AUTH_PASSWORD=<strong-password>
+N8N_ENCRYPTION_KEY=<generate-random-key>
+N8N_USER_MANAGEMENT_JWT_SECRET=<generate-random-secret>
+N8N_PROTOCOL=https
+WEBHOOK_URL=https://your-domain.com/
+EOF
+```
+
+3. **Start n8n:**
+```bash
+docker compose -f docker-compose.n8n.yml up -d
+```
+
+4. **Access n8n:**
+- URL: `http://your-server-ip:5678` or `https://your-domain.com`
+- Login with credentials from `.env`
+
+5. **Configure reverse proxy (nginx example):**
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    
+    location / {
+        proxy_pass http://localhost:5678;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+**Maintenance:**
+```bash
+# View logs
+docker compose -f docker-compose.n8n.yml logs -f n8n
+
+# Restart n8n
+docker compose -f docker-compose.n8n.yml restart n8n
+
+# Backup n8n data
+docker cp houseblock-n8n:/home/node/.n8n ./n8n-backup
+```
+
+See [DEPLOY.md](./DEPLOY.md) for complete deployment guide.
 
 ### Quick Start Scripts
 
@@ -564,10 +734,10 @@ See `CONTRIBUTING.md` for detailed guidelines.
 
 ```bash
 # Start infrastructure
-docker compose -f infra/docker/docker-compose.dev.yml up -d
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up -d
 
 # Start a service
-cd services/news-scraper-ms
+cd services/input-layer/news-scraper-ms
 pnpm dev
 
 # Health check

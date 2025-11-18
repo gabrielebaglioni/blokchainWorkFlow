@@ -1,0 +1,391 @@
+version: '3.8'
+
+# Docker Compose per tutti i microservizi HouseBlock
+# Usa questo file per avviare tutti i 12 microservizi insieme
+
+services:
+  # Redis (shared cache)
+  redis:
+    image: redis:7-alpine
+    container_name: houseblock-redis-services
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data-services:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - houseblock-services-network
+
+  # PostgreSQL (shared database)
+  postgres:
+    image: postgres:15-alpine
+    container_name: houseblock-postgres-services
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-houseblock}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data-services:/var/lib/postgresql/data
+      - ../db/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - houseblock-services-network
+
+  # Input Layer Services
+  news-scraper-ms:
+    build:
+      context: ../..
+      dockerfile: services/input-layer/news-scraper-ms/Dockerfile.dev
+    container_name: houseblock-news-scraper-ms
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    volumes:
+      - ../../services/input-layer/news-scraper-ms:/app/services/input-layer/news-scraper-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  sentiment-tracker-ms:
+    build:
+      context: ../..
+      dockerfile: services/input-layer/sentiment-tracker-ms/Dockerfile.dev
+    container_name: houseblock-sentiment-tracker-ms
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/input-layer/sentiment-tracker-ms:/app/services/input-layer/sentiment-tracker-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  onchain-monitor-ms:
+    build:
+      context: ../..
+      dockerfile: services/input-layer/onchain-monitor-ms/Dockerfile.dev
+    container_name: houseblock-onchain-monitor-ms
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PORT=3003
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - ETH_RPC_URL=${ETH_RPC_URL}
+    volumes:
+      - ../../services/input-layer/onchain-monitor-ms:/app/services/input-layer/onchain-monitor-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  # AI Layer Services
+  trend-analyzer-ms:
+    build:
+      context: ../..
+      dockerfile: services/ai-layer/trend-analyzer-ms/Dockerfile.dev
+    container_name: houseblock-trend-analyzer-ms
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=development
+      - PORT=3004
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/ai-layer/trend-analyzer-ms:/app/services/ai-layer/trend-analyzer-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  opportunity-detector-ms:
+    build:
+      context: ../..
+      dockerfile: services/ai-layer/opportunity-detector-ms/Dockerfile.dev
+    container_name: houseblock-opportunity-detector-ms
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=development
+      - PORT=3005
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/ai-layer/opportunity-detector-ms:/app/services/ai-layer/opportunity-detector-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  competitor-watchdog-ms:
+    build:
+      context: ../..
+      dockerfile: services/ai-layer/competitor-watchdog-ms/Dockerfile.dev
+    container_name: houseblock-competitor-watchdog-ms
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=development
+      - PORT=3006
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/ai-layer/competitor-watchdog-ms:/app/services/ai-layer/competitor-watchdog-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  # Content Layer Services
+  ai-content-engine-ms:
+    build:
+      context: ../..
+      dockerfile: services/content-layer/ai-content-engine-ms/Dockerfile.dev
+    container_name: houseblock-ai-content-engine-ms
+    ports:
+      - "3007:3007"
+    environment:
+      - NODE_ENV=development
+      - PORT=3007
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/content-layer/ai-content-engine-ms:/app/services/content-layer/ai-content-engine-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  visual-generator-ms:
+    build:
+      context: ../..
+      dockerfile: services/content-layer/visual-generator-ms/Dockerfile.dev
+    container_name: houseblock-visual-generator-ms
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=development
+      - PORT=3008
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/content-layer/visual-generator-ms:/app/services/content-layer/visual-generator-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  video-generator-ms:
+    build:
+      context: ../..
+      dockerfile: services/content-layer/video-generator-ms/Dockerfile.dev
+    container_name: houseblock-video-generator-ms
+    ports:
+      - "3009:3009"
+    environment:
+      - NODE_ENV=development
+      - PORT=3009
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ../../services/content-layer/video-generator-ms:/app/services/content-layer/video-generator-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  # Publishing Layer Services
+  social-publisher-ms:
+    build:
+      context: ../..
+      dockerfile: services/publishing-layer/social-publisher-ms/Dockerfile.dev
+    container_name: houseblock-social-publisher-ms
+    ports:
+      - "3010:3010"
+    environment:
+      - NODE_ENV=development
+      - PORT=3010
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+      - TWITTER_API_KEY=${TWITTER_API_KEY}
+      - TWITTER_API_SECRET=${TWITTER_API_SECRET}
+    volumes:
+      - ../../services/publishing-layer/social-publisher-ms:/app/services/publishing-layer/social-publisher-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  knowledge-base-ms:
+    build:
+      context: ../..
+      dockerfile: services/publishing-layer/knowledge-base-ms/Dockerfile.dev
+    container_name: houseblock-knowledge-base-ms
+    ports:
+      - "3011:3011"
+    environment:
+      - NODE_ENV=development
+      - PORT=3011
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    volumes:
+      - ../../services/publishing-layer/knowledge-base-ms:/app/services/publishing-layer/knowledge-base-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+  # Utility Layer Services
+  telemetry-logger-ms:
+    build:
+      context: ../..
+      dockerfile: services/utility-layer/telemetry-logger-ms/Dockerfile.dev
+    container_name: houseblock-telemetry-logger-ms
+    ports:
+      - "3012:3012"
+    environment:
+      - NODE_ENV=development
+      - PORT=3012
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=${DATABASE_URL}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    volumes:
+      - ../../services/utility-layer/telemetry-logger-ms:/app/services/utility-layer/telemetry-logger-ms
+      - ../../packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - houseblock-services-network
+    restart: unless-stopped
+
+volumes:
+  redis-data-services:
+  postgres-data-services:
+
+networks:
+  houseblock-services-network:
+    driver: bridge
+

@@ -1,120 +1,109 @@
-# Struttura ad Albero Dettagliata - Progetto HOMEBLOCK
+# Struttura del Progetto HOMEBLOCK
+
+## Panoramica
+HOMEBLOCK è un sistema di microservizi per AI, automazione e Web3, organizzato come monorepo utilizzando pnpm workspaces.
 
 ```
 homeBlock/
-│
-├── 📁 apps/                          # Applicazioni principali
-│   ├── 📁 dashboard/                 # Dashboard (vuota)
-│   ├── 📁 n8n/                       # Configurazione n8n (vuota)
-│   └── 📁 web-landing/               # Applicazione Next.js - Landing Page
-│       ├── 📁 public/                # File statici pubblici
-│       │   ├── 📁 assets/            # Asset multimediali
-│       │   │   ├── 📁 silviculture/  # Immagini membri silviculture (15 .jpg)
-│       │   │   ├── *.jpg, *.webp     # Immagini landscape (varie risoluzioni)
-│       │   │   ├── *.svg             # Icone e grafiche vettoriali
-│       │   │   ├── *.glb, *.obj      # Modelli 3D (eth_12k.glb, ether.glb, sphare.glb)
-│       │   │   ├── *.png             # Immagini raster
-│       │   │   └── dotTexture.png    # Texture
-│       │   ├── apple-icon.png
-│       │   ├── eth-colorful-icon.svg
-│       │   ├── favicon-32x32.png
-│       │   ├── favicon.png
-│       │   ├── houseblock-icon.svg
-│       │   ├── houseblock-logo.svg
-│       │   ├── houseblock-menu-bg.svg
-│       │   ├── houseblock-og-image.svg
-│       │   ├── report-2022-04.pdf
-│       │   └── report-2024.pdf
-│       │
-│       ├── 📁 src/                    # Codice sorgente
-│       │   ├── 📁 _pages/            # Pagine legacy
+├── apps/                          # Applicazioni frontend/backend
+│   ├── dashboard/                 # Dashboard (vuota)
+│   ├── n8n/                      # Configurazione n8n (vuota)
+│   └── web-landing/              # Applicazione Next.js principale
+│       ├── public/                # Asset pubblici statici
+│       │   ├── assets/            # Immagini, modelli 3D, icone
+│       │   │   ├── silviculture/  # Immagini membri silviculture (15 jpg)
+│       │   │   ├── *.jpg          # Immagini landscape (varie risoluzioni)
+│       │   │   ├── *.webp         # Immagini webp ottimizzate
+│       │   │   ├── *.svg          # Icone e grafiche vettoriali
+│       │   │   ├── *.png          # Immagini raster
+│       │   │   ├── *.glb          # Modelli 3D (eth_12k.glb, ether.glb, sphare.glb)
+│       │   │   └── *.obj          # Modelli 3D alternativi
+│       │   ├── *.svg              # Icone principali
+│       │   ├── *.png              # Favicon e icone
+│       │   └── *.pdf              # Report (2022, 2024)
+│       ├── src/                   # Codice sorgente
+│       │   ├── _pages/            # Pagine legacy
 │       │   │   └── something.tsx
-│       │   │
-│       │   ├── 📁 app/                # App Router Next.js 13+
-│       │   │   ├── 📁 ai-layer/      # Pagina AI Layer
+│       │   ├── app/               # Next.js App Router
+│       │   │   ├── ai-layer/      # Pagina AI Layer
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 architecture/  # Pagina Architecture
+│       │   │   ├── architecture/  # Pagina Architecture
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 contact/       # Pagina Contact
+│       │   │   ├── contact/        # Pagina Contact
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 future/        # Pagina Future
+│       │   │   ├── future/         # Pagina Future
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 identity/      # Pagina Identity
+│       │   │   ├── identity/       # Pagina Identity
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 input-layer/  # Pagina Input Layer
+│       │   │   ├── input-layer/    # Pagina Input Layer
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 output-layer/ # Pagina Output Layer
+│       │   │   ├── output-layer/   # Pagina Output Layer
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 publishing/   # Pagina Publishing
+│       │   │   ├── publishing/     # Pagina Publishing
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── 📁 why-exists/    # Pagina Why Exists
+│       │   │   ├── why-exists/     # Pagina Why Exists
 │       │   │   │   ├── head.tsx
 │       │   │   │   └── page.tsx
-│       │   │   ├── head.tsx          # Head globale
-│       │   │   ├── icon.png          # Icona app
-│       │   │   ├── icon.svg          # Icona app SVG
-│       │   │   ├── layout.tsx        # Layout principale
-│       │   │   └── page.tsx          # Homepage
-│       │   │
-│       │   ├── 📁 assets/            # Asset del codice
-│       │   │   ├── 📁 icons/         # Icone SVG
-│       │   │   │   ├── chevron.svg
-│       │   │   │   └── hamburger.svg
-│       │   │   └── 📁 images/        # Immagini
-│       │   │       └── houseblock-logo.svg
-│       │   │
-│       │   ├── 📁 components/        # Componenti React
-│       │   │   ├── 📁 footer/        # Footer component
+│       │   │   ├── head.tsx        # Head globale
+│       │   │   ├── icon.png        # Icona app
+│       │   │   ├── icon.svg        # Icona app SVG
+│       │   │   ├── layout.tsx      # Layout principale
+│       │   │   └── page.tsx        # Homepage
+│       │   ├── assets/             # Asset del codice
+│       │   │   ├── icons/          # Icone SVG (2 file)
+│       │   │   └── images/         # Immagini (1 SVG)
+│       │   ├── components/         # Componenti React
+│       │   │   ├── footer/         # Footer component
 │       │   │   │   ├── Footer.module.scss
 │       │   │   │   └── Footer.tsx
-│       │   │   ├── 📁 icons/         # Componenti icone
+│       │   │   ├── icons/          # Componenti icone
 │       │   │   │   └── DoubleSpiraleIcon.tsx
-│       │   │   ├── 📁 nav/           # Navigation component
+│       │   │   ├── nav/            # Navigation component
 │       │   │   │   ├── Nav.module.scss
 │       │   │   │   └── Nav.tsx
-│       │   │   ├── 📁 page/          # Componenti pagina
-│       │   │   │   ├── 📁 animation/ # Sistema di animazione 3D
-│       │   │   │   │   ├── 📁 constants/    # Configurazioni
+│       │   │   ├── page/           # Componenti pagina principale
+│       │   │   │   ├── animation/  # Sistema di animazione 3D
+│       │   │   │   │   ├── constants/
 │       │   │   │   │   │   ├── sceneConfig.js
 │       │   │   │   │   │   └── textureMap.js
-│       │   │   │   │   ├── 📁 loaders/      # Caricatori asset
+│       │   │   │   │   ├── loaders/
 │       │   │   │   │   │   ├── assetLoader.js
 │       │   │   │   │   │   ├── globalLoaders.js
 │       │   │   │   │   │   └── textureLoader.js
-│       │   │   │   │   ├── 📁 orchestrator/ # Orchestratore principale
+│       │   │   │   │   ├── orchestrator/
 │       │   │   │   │   │   └── main.js
-│       │   │   │   │   ├── 📁 particleObjects/ # Oggetti particelle
+│       │   │   │   │   ├── particleObjects/
 │       │   │   │   │   │   ├── house.js
 │       │   │   │   │   │   ├── minecraftScene.js
 │       │   │   │   │   │   ├── sparseParticleMesh.js
 │       │   │   │   │   │   └── tree.js
-│       │   │   │   │   ├── 📁 rendering/     # Loop di rendering
+│       │   │   │   │   ├── rendering/
 │       │   │   │   │   │   └── renderLoop.js
-│       │   │   │   │   ├── 📁 scene/        # Setup scena Three.js
+│       │   │   │   │   ├── scene/
 │       │   │   │   │   │   ├── camera.js
 │       │   │   │   │   │   ├── controls.js
 │       │   │   │   │   │   ├── lighting.js
 │       │   │   │   │   │   ├── postProcessing.js
 │       │   │   │   │   │   ├── renderer.js
 │       │   │   │   │   │   └── scene.js
-│       │   │   │   │   ├── 📁 shaders/      # Shader GLSL
+│       │   │   │   │   ├── shaders/          # Shader GLSL
 │       │   │   │   │   │   ├── explosionVertexShader.glsl
 │       │   │   │   │   │   ├── explosionVertexShaderTwo.glsl
 │       │   │   │   │   │   ├── firefliesFragmentShader.glsl
 │       │   │   │   │   │   ├── firefliesFragmentShaderTwo.glsl
-│       │   │   │   │   │   ├── firefliesVertexShader_ETHLogo_Slow.glsl
-│       │   │   │   │   │   ├── firefliesVertexShader_ETHLogo.glsl
 │       │   │   │   │   │   ├── firefliesVertexShader.glsl
+│       │   │   │   │   │   ├── firefliesVertexShader_ETHLogo.glsl
+│       │   │   │   │   │   ├── firefliesVertexShader_ETHLogo_Slow.glsl
 │       │   │   │   │   │   └── fragment_shader.glsl
-│       │   │   │   │   ├── 📁 threeJsAssets/ # Asset Three.js custom
+│       │   │   │   │   ├── threeJsAssets/     # Three.js utilities
 │       │   │   │   │   │   ├── EffectComposer.js
 │       │   │   │   │   │   ├── GLTFLoader.js
 │       │   │   │   │   │   ├── MaskPass.js
@@ -122,209 +111,266 @@ homeBlock/
 │       │   │   │   │   │   ├── Pass.js
 │       │   │   │   │   │   ├── RenderPass.js
 │       │   │   │   │   │   ├── ShaderPass.js
-│       │   │   │   │   │   ├── 📁 shaders/
-│       │   │   │   │   │   │   ├── CopyShader.js
-│       │   │   │   │   │   │   ├── DigitalGlitch.js
-│       │   │   │   │   │   │   └── LuminosityHighPassShader.js
-│       │   │   │   │   │   └── UnrealBloomPass.js
-│       │   │   │   │   ├── 📁 utils/        # Utility
+│       │   │   │   │   │   ├── UnrealBloomPass.js
+│       │   │   │   │   │   └── shaders/
+│       │   │   │   │   │       ├── CopyShader.js
+│       │   │   │   │   │       ├── DigitalGlitch.js
+│       │   │   │   │   │       └── LuminosityHighPassShader.js
+│       │   │   │   │   ├── utils/
 │       │   │   │   │   │   ├── colors.js
 │       │   │   │   │   │   ├── device.js
 │       │   │   │   │   │   ├── helpers.js
 │       │   │   │   │   │   ├── webp.js
 │       │   │   │   │   │   └── webpDetection.js
-│       │   │   │   │   ├── 📁 visualEffects/ # Effetti visivi
+│       │   │   │   │   ├── visualEffects/
 │       │   │   │   │   │   ├── background.js
 │       │   │   │   │   │   └── fireflies.js
-│       │   │   │   │   └── index.js          # Entry point animazione
-│       │   │   │   ├── 📁 assets/           # Asset duplicati (legacy?)
-│       │   │   │   │   ├── EffectComposer.js
-│       │   │   │   │   ├── GLTFLoader.js
-│       │   │   │   │   ├── MaskPass.js
-│       │   │   │   │   ├── OrbitControls.js
-│       │   │   │   │   ├── Pass.js
-│       │   │   │   │   ├── RenderPass.js
-│       │   │   │   │   ├── ShaderPass.js
-│       │   │   │   │   ├── 📁 shaders/
-│       │   │   │   │   │   ├── CopyShader.js
-│       │   │   │   │   │   ├── DigitalGlitch.js
-│       │   │   │   │   │   └── LuminosityHighPassShader.js
-│       │   │   │   │   └── UnrealBloomPass.js
-│       │   │   │   ├── animation-context.tsx # Context React per animazioni
-│       │   │   │   ├── Content.module.scss   # Stili componente Content
-│       │   │   │   ├── Content.tsx           # Componente Content principale
-│       │   │   │   └── Head.tsx              # Head component
-│       │   │   ├── 📁 silviculture-society-members/ # Componente membri
+│       │   │   │   │   └── index.js
+│       │   │   │   ├── assets/                # Asset duplicati per compatibilità
+│       │   │   │   │   └── [stessi file di threeJsAssets]
+│       │   │   │   ├── animation-context.tsx
+│       │   │   │   ├── Content.module.scss
+│       │   │   │   ├── Content.tsx
+│       │   │   │   └── Head.tsx
+│       │   │   ├── silviculture-society-members/
 │       │   │   │   ├── SilvicultureSociety.module.scss
 │       │   │   │   └── SilvicultureSociety.tsx
-│       │   │   └── Link.tsx                  # Componente Link custom
-│       │   │
-│       │   ├── 📁 styles/            # Stili globali
-│       │   │   ├── 📁 assets/        # Asset per stili
+│       │   │   └── Link.tsx
+│       │   ├── styles/            # Stili globali
+│       │   │   ├── assets/        # Asset per stili
 │       │   │   │   ├── ETH-loading.svg
 │       │   │   │   ├── houseblock-loading.svg
 │       │   │   │   └── twitter.png
-│       │   │   ├── global.scss       # Stili globali
-│       │   │   ├── reset.scss        # CSS reset
-│       │   │   └── variables.scss    # Variabili SCSS
-│       │   │
-│       │   └── 📁 utils/             # Utility functions
-│       │       └── useScrollDirection.ts # Hook scroll direction
-│       │
-│       ├── COMMANDS.md                # Comandi disponibili
-│       ├── DOCKER.md                  # Documentazione Docker
-│       ├── Dockerfile                 # Dockerfile produzione
-│       ├── Dockerfile.dev             # Dockerfile sviluppo
-│       ├── docker-compose.yml         # Docker Compose sviluppo
-│       ├── docker-compose.prod.yml    # Docker Compose produzione
-│       ├── next-env.d.ts              # Tipi Next.js
-│       ├── next.config.js             # Configurazione Next.js
-│       ├── package.json               # Dipendenze progetto
-│       ├── tsconfig.json              # Configurazione TypeScript
-│       └── vercel.json                # Configurazione Vercel
+│       │   │   ├── global.scss
+│       │   │   ├── reset.scss
+│       │   │   └── variables.scss
+│       │   └── utils/             # Utility functions
+│       │       └── useScrollDirection.ts
+│       ├── COMMANDS.md            # Comandi disponibili
+│       ├── DOCKER.md              # Documentazione Docker
+│       ├── next-env.d.ts          # TypeScript definitions Next.js
+│       ├── next.config.js         # Configurazione Next.js
+│       ├── package.json           # Dipendenze app
+│       ├── tsconfig.json          # Configurazione TypeScript
+│       └── vercel.json            # Configurazione Vercel
 │
-├── 📁 infra/                         # Infrastruttura e configurazioni
-│   ├── 📁 db/                        # Database
-│   │   ├── 📁 migrations/            # Migrazioni database
-│   │   └── 📁 schemas/                # Schemi database
-│   ├── 📁 docker/                    # Configurazioni Docker
-│   │   └── docker-compose.yml
-│   ├── 📁 grafana/                   # Configurazioni Grafana
-│   │   ├── 📁 dashboards/            # Dashboard Grafana
-│   │   └── 📁 provisioning/          # Provisioning Grafana
-│   ├── 📁 n8n/                       # Configurazioni n8n
-│   │   ├── 📁 credentials/           # Credenziali n8n
-│   │   └── 📁 workflows/             # Workflow n8n
-│   └── 📁 scripts/                    # Script infrastruttura
-│
-├── 📁 packages/                      # Package condivisi (monorepo)
-│   ├── 📁 hb-shared-ai/              # Package AI condiviso
-│   │   ├── 📁 __tests__/             # Test
-│   │   ├── 📁 docs/                  # Documentazione
-│   │   ├── 📁 src/                   # Codice sorgente
+├── packages/                      # Package condivisi
+│   ├── hb-shared-ai/             # Package AI condiviso
+│   │   ├── __tests__/            # Test
+│   │   ├── docs/                 # Documentazione
+│   │   ├── src/                  # Codice sorgente (vuoto)
 │   │   └── package.json
-│   ├── 📁 hb-shared-config/          # Package configurazione condivisa
-│   │   ├── 📁 __tests__/             # Test
-│   │   ├── 📁 docs/                  # Documentazione
-│   │   ├── 📁 src/                   # Codice sorgente
+│   ├── hb-shared-config/         # Configurazioni condivise
+│   │   ├── __tests__/
+│   │   ├── docs/
+│   │   ├── src/                  # Codice sorgente (vuoto)
 │   │   └── package.json
-│   └── 📁 hb-shared-types/           # Package tipi TypeScript condivisi
-│       ├── 📁 __tests__/             # Test
-│       ├── 📁 docs/                  # Documentazione
-│       ├── 📁 src/                   # Codice sorgente
+│   └── hb-shared-types/           # Tipi TypeScript condivisi
+│       ├── __tests__/
+│       ├── docs/
+│       ├── src/                  # Codice sorgente (vuoto)
 │       └── package.json
 │
-├── 📁 public/                        # File pubblici root (vuoto)
+├── services/                      # Microservizi
+│   ├── ai-layer/                 # Layer AI
+│   │   ├── competitor-watchdog-ms/    # Monitoraggio competitor
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   ├── opportunity-detector-ms/   # Rilevamento opportunità
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   └── trend-analyzer-ms/         # Analisi trend
+│   │       ├── src/
+│   │       │   └── index.ts
+│   │       ├── Dockerfile
+│   │       ├── Dockerfile.dev
+│   │       ├── package.json
+│   │       ├── README.md
+│   │       ├── TODO.md
+│   │       └── tsconfig.json
+│   │
+│   ├── content-layer/            # Layer contenuti
+│   │   ├── ai-content-engine-ms/     # Engine contenuti AI
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   ├── video-generator-ms/        # Generatore video
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   └── visual-generator-ms/       # Generatore visual
+│   │       ├── src/
+│   │       │   └── index.ts
+│   │       ├── Dockerfile
+│   │       ├── Dockerfile.dev
+│   │       ├── package.json
+│   │       ├── README.md
+│   │       ├── TODO.md
+│   │       └── tsconfig.json
+│   │
+│   ├── input-layer/              # Layer input
+│   │   ├── news-scraper-ms/          # Scraper notizie
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   ├── onchain-monitor-ms/       # Monitoraggio on-chain
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   └── sentiment-tracker-ms/     # Tracker sentiment
+│   │       ├── src/
+│   │       │   └── index.ts
+│   │       ├── Dockerfile
+│   │       ├── Dockerfile.dev
+│   │       ├── package.json
+│   │       ├── README.md
+│   │       ├── TODO.md
+│   │       └── tsconfig.json
+│   │
+│   ├── publishing-layer/         # Layer pubblicazione
+│   │   ├── knowledge-base-ms/        # Knowledge base
+│   │   │   ├── src/
+│   │   │   │   └── index.ts
+│   │   │   ├── Dockerfile
+│   │   │   ├── Dockerfile.dev
+│   │   │   ├── package.json
+│   │   │   ├── README.md
+│   │   │   ├── TODO.md
+│   │   │   └── tsconfig.json
+│   │   └── social-publisher-ms/      # Publisher social
+│   │       ├── src/
+│   │       │   └── index.ts
+│   │       ├── Dockerfile
+│   │       ├── Dockerfile.dev
+│   │       ├── package.json
+│   │       ├── README.md
+│   │       ├── TODO.md
+│   │       └── tsconfig.json
+│   │
+│   └── utility-layer/           # Layer utility
+│       └── telemetry-logger-ms/      # Logger telemetria
+│           ├── src/
+│           │   └── index.ts
+│           ├── Dockerfile
+│           ├── Dockerfile.dev
+│           ├── package.json
+│           ├── README.md
+│           ├── TODO.md
+│           └── tsconfig.json
 │
-├── 📁 services/                      # Microservizi
-│   ├── 📁 ai-content-engine-ms/     # Microservizio AI Content Engine
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 competitor-watchdog-ms/   # Microservizio Competitor Watchdog
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 knowledge-base-ms/        # Microservizio Knowledge Base
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 news-scraper-ms/          # Microservizio News Scraper
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 onchain-monitor-ms/       # Microservizio Onchain Monitor
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 opportunity-detector-ms/  # Microservizio Opportunity Detector
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 sentiment-tracker-ms/     # Microservizio Sentiment Tracker
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 social-publisher-ms/      # Microservizio Social Publisher
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 telemetry-logger-ms/      # Microservizio Telemetry Logger
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 trend-analyzer-ms/        # Microservizio Trend Analyzer
-│   │   ├── README.md
-│   │   └── TODO.md
-│   ├── 📁 video-generator-ms/       # Microservizio Video Generator
-│   │   ├── README.md
-│   │   └── TODO.md
-│   └── 📁 visual-generator-ms/      # Microservizio Visual Generator
-│       ├── README.md
-│       └── TODO.md
+├── infra/                        # Infrastruttura
+│   ├── db/                       # Database
+│   │   ├── migrations/           # Migrazioni DB
+│   │   └── schemas/              # Schemi DB
+│   ├── docker/                   # Configurazione Docker
+│   │   ├── docker-compose.yml        # Compose principale
+│   │   ├── docker-compose.dev.yml    # Compose sviluppo
+│   │   ├── docker-compose.prod.yml   # Compose produzione
+│   │   ├── Dockerfile.web-landing    # Dockerfile web landing
+│   │   └── Dockerfile.web-landing.dev # Dockerfile dev
+│   ├── grafana/                  # Configurazione Grafana
+│   │   ├── dashboards/           # Dashboard Grafana
+│   │   └── provisioning/         # Provisioning Grafana
+│   ├── n8n/                      # Configurazione n8n
+│   │   ├── credentials/          # Credenziali n8n
+│   │   └── workflows/            # Workflow n8n
+│   └── scripts/                  # Script infrastruttura
 │
-├── 📁 src/                           # Sorgenti root (vuoto)
+├── public/                       # Public root (vuota)
 │
-├── 📄 CONTRIBUTING.md                # Linee guida contribuzione
-├── 📄 QUICK_START.md                 # Guida quick start
-├── 📄 README.md                      # Documentazione principale
-├── 📄 TODO.md                        # Lista TODO progetto
-├── 📄 .env.example                    # Esempio variabili ambiente
-├── 📄 .gitignore                     # File ignorati da Git
-├── 📄 next-env.d.ts                  # Tipi Next.js root
-├── 📄 next.config.js                 # Configurazione Next.js root
-├── 📄 package-lock.json              # Lock file npm
-├── 📄 package.json                    # Package.json root
-├── 📄 pnpm-lock.yaml                 # Lock file pnpm
-├── 📄 pnpm-workspace.yaml            # Configurazione workspace pnpm
-├── 📄 tsconfig.json                   # Configurazione TypeScript root
-└── 📄 vercel.json                     # Configurazione Vercel root
+├── .env.example                  # Esempio variabili ambiente
+├── .gitignore                    # Git ignore
+├── COMMANDS.md                   # Comandi progetto
+├── CONTRIBUTING.md               # Linee guida contribuzione
+├── DEPLOY.md                     # Documentazione deploy
+├── next-env.d.ts                 # TypeScript definitions
+├── package.json                  # Package.json root
+├── pnpm-lock.yaml                # Lock file pnpm
+├── pnpm-workspace.yaml           # Configurazione workspace pnpm
+├── QUICK_START.md                # Guida quick start
+├── README.md                     # README principale
+├── TODO.md                       # TODO progetto
+├── tsconfig.json                 # Configurazione TypeScript root
+└── vercel.json                   # Configurazione Vercel
 ```
 
-## Descrizione Struttura
+## Architettura del Progetto
 
-### 🎯 **apps/**
-Contiene le applicazioni principali del progetto:
-- **web-landing**: Applicazione Next.js con sistema di animazioni 3D basato su Three.js
-- **dashboard**: Dashboard (da implementare)
-- **n8n**: Configurazione workflow automation (da implementare)
+### Monorepo Structure
+Il progetto utilizza **pnpm workspaces** per gestire un monorepo con:
+- **Apps**: Applicazioni frontend/backend
+- **Packages**: Package condivisi tra i servizi
+- **Services**: Microservizi organizzati per layer
+- **Infra**: Configurazione infrastruttura
 
-### 🏗️ **packages/**
-Package condivisi in stile monorepo:
-- **hb-shared-ai**: Logica AI condivisa
-- **hb-shared-config**: Configurazioni condivise
-- **hb-shared-types**: Tipi TypeScript condivisi
+### Layer dei Microservizi
 
-### 🔧 **services/**
-Microservizi del sistema (tutti in fase di sviluppo):
-- **ai-content-engine-ms**: Generazione contenuti AI
-- **competitor-watchdog-ms**: Monitoraggio competitor
-- **knowledge-base-ms**: Base di conoscenza
-- **news-scraper-ms**: Scraping notizie
-- **onchain-monitor-ms**: Monitoraggio blockchain
-- **opportunity-detector-ms**: Rilevamento opportunità
-- **sentiment-tracker-ms**: Analisi sentiment
-- **social-publisher-ms**: Pubblicazione social
-- **telemetry-logger-ms**: Logging telemetria
-- **trend-analyzer-ms**: Analisi trend
-- **video-generator-ms**: Generazione video
-- **visual-generator-ms**: Generazione visual
+1. **Input Layer**: Raccolta dati
+   - News Scraper
+   - On-chain Monitor
+   - Sentiment Tracker
 
-### 🛠️ **infra/**
-Configurazioni infrastruttura:
-- **db/**: Database e migrazioni
-- **docker/**: Configurazioni Docker
-- **grafana/**: Dashboard e provisioning Grafana
-- **n8n/**: Credenziali e workflow n8n
-- **scripts/**: Script di automazione
+2. **AI Layer**: Elaborazione AI
+   - Competitor Watchdog
+   - Opportunity Detector
+   - Trend Analyzer
 
-### 🎨 **apps/web-landing/src/components/page/animation/**
-Sistema di animazione 3D complesso con:
-- **Three.js** per rendering 3D
-- **Shader GLSL** per effetti grafici avanzati
-- **Particle systems** per effetti particellari
-- **Post-processing** per effetti visivi
-- **Asset loaders** per caricamento modelli 3D
+3. **Content Layer**: Generazione contenuti
+   - AI Content Engine
+   - Video Generator
+   - Visual Generator
 
-### 📦 **Gestione Dipendenze**
-Il progetto utilizza:
-- **pnpm** come package manager principale (pnpm-workspace.yaml)
-- **npm** come fallback (package-lock.json presente)
-- **Monorepo** structure con workspace
+4. **Publishing Layer**: Pubblicazione
+   - Knowledge Base
+   - Social Publisher
 
-### 🚀 **Deploy**
-- Configurazione **Vercel** (vercel.json)
-- Supporto **Docker** (Dockerfile, docker-compose)
-- Configurazione **Netlify** (netlify.toml)
+5. **Utility Layer**: Servizi di supporto
+   - Telemetry Logger
+
+### Web Landing App
+Applicazione Next.js con:
+- **App Router**: Routing moderno Next.js 13+
+- **3D Animations**: Sistema Three.js per animazioni 3D
+- **Components**: Componenti React modulari
+- **Styles**: SCSS modulare
+
+### Tecnologie Principali
+- **Frontend**: Next.js, React, TypeScript, Three.js
+- **Backend**: Microservizi Node.js/TypeScript
+- **Package Manager**: pnpm
+- **Container**: Docker
+- **Deployment**: Vercel
+- **Monitoring**: Grafana
 

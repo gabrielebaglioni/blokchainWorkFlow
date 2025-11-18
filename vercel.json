@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "buildCommand": "pnpm install && pnpm --filter web-landing build",
-  "devCommand": "pnpm --filter web-landing dev",
-  "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "outputDirectory": ".next"
-}
-

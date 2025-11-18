@@ -1,0 +1,26 @@
+# Development Dockerfile for trend-analyzer-ms
+
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY services/ai-layer/trend-analyzer-ms/package.json ./services/ai-layer/trend-analyzer-ms/
+COPY packages ./packages
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code (will be mounted as volume in docker-compose)
+COPY services/ai-layer/trend-analyzer-ms ./services/ai-layer/trend-analyzer-ms
+
+WORKDIR /app/services/ai-layer/trend-analyzer-ms
+
+EXPOSE 3004
+6379
+
+CMD ["pnpm", "dev"]

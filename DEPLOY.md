@@ -107,7 +107,7 @@ vercel --cwd apps/web-landing
 ### Deploy con Docker Compose
 
 ```bash
-cd /opt/houseblock/infra/docker
+cd /opt/houseblock/infra/houseblockDocker
 
 # Avvia solo n8n
 docker compose -f docker-compose.prod.yml up -d n8n
@@ -200,10 +200,10 @@ sudo certbot --nginx -d n8n.yourdomain.com
 
 ### Deploy Stack Completo
 
-Il file `infra/docker/docker-compose.prod.yml` include già tutti i servizi. Per deployare tutto:
+Il file `infra/houseblockDocker/docker-compose.prod.yml` include già tutti i servizi. Per deployare tutto:
 
 ```bash
-cd /opt/houseblock/infra/docker
+cd /opt/houseblock/infra/houseblockDocker
 
 # Avvia tutto lo stack
 docker compose -f docker-compose.prod.yml up -d
@@ -330,7 +330,7 @@ docker run -d \
 docker logs -f houseblock-<ms-name>
 
 # Log di tutti i servizi
-docker compose -f infra/docker/docker-compose.prod.yml logs -f
+docker compose -f infra/houseblockDocker/docker-compose.prod.yml logs -f
 ```
 
 ## Deploy Dashboard (futuro)
@@ -381,7 +381,7 @@ Quando il dashboard sarà implementato, seguirà lo stesso pattern della web lan
 
 1. Verifica che PostgreSQL/Redis siano attivi:
    ```bash
-   docker compose -f infra/docker/docker-compose.prod.yml ps
+   docker compose -f infra/houseblockDocker/docker-compose.prod.yml ps
    ```
 
 2. Verifica le credenziali nel file `.env`

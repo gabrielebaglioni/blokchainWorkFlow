@@ -52,20 +52,20 @@ pnpm start
 
 ```bash
 # Avvia solo web-landing in dev
-docker compose -f infra/docker/docker-compose.dev.yml up web-landing
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up web-landing
 
 # Avvia in background
-docker compose -f infra/docker/docker-compose.dev.yml up -d web-landing
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up -d web-landing
 ```
 
 #### Produzione con Docker
 
 ```bash
 # Build e avvio
-docker compose -f infra/docker/docker-compose.prod.yml up web-landing
+docker compose -f infra/houseblockDocker/docker-compose.prod.yml up web-landing
 
 # In background
-docker compose -f infra/docker/docker-compose.prod.yml up -d web-landing
+docker compose -f infra/houseblockDocker/docker-compose.prod.yml up -d web-landing
 ```
 
 ### Dashboard (`apps/dashboard`)
@@ -129,7 +129,7 @@ docker run --env-file .env.local -p <PORT>:<PORT> houseblock/<ms-name>-dev
 
 **Esempio per news-scraper-ms:**
 ```bash
-cd services/news-scraper-ms
+cd services/input-layer/news-scraper-ms
 docker build -f Dockerfile.dev -t houseblock/news-scraper-ms-dev .
 docker run --env-file .env.local -p 3001:3001 houseblock/news-scraper-ms-dev
 ```
@@ -148,7 +148,7 @@ docker run --env-file .env.production -p <PORT>:<PORT> houseblock/<ms-name>
 
 **Esempio per news-scraper-ms:**
 ```bash
-cd services/news-scraper-ms
+cd services/input-layer/news-scraper-ms
 docker build -t houseblock/news-scraper-ms .
 docker run --env-file .env.production -p 3001:3001 houseblock/news-scraper-ms
 ```
@@ -192,13 +192,13 @@ Avvia tutta l'infrastruttura di sviluppo (Redis, Postgres, n8n, web-landing):
 
 ```bash
 # Dalla root
-docker compose -f infra/docker/docker-compose.dev.yml up
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up
 
 # In background
-docker compose -f infra/docker/docker-compose.dev.yml up -d
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up -d
 
 # Solo infrastruttura (senza web-landing)
-docker compose -f infra/docker/docker-compose.dev.yml up redis postgres n8n
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml up redis postgres n8n
 ```
 
 ### Produzione
@@ -207,29 +207,29 @@ Avvia tutta l'infrastruttura di produzione:
 
 ```bash
 # Dalla root
-docker compose -f infra/docker/docker-compose.prod.yml up
+docker compose -f infra/houseblockDocker/docker-compose.prod.yml up
 
 # In background
-docker compose -f infra/docker/docker-compose.prod.yml up -d
+docker compose -f infra/houseblockDocker/docker-compose.prod.yml up -d
 ```
 
 ### Gestione Container
 
 ```bash
 # Visualizza container attivi
-docker compose -f infra/docker/docker-compose.dev.yml ps
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml ps
 
 # Visualizza log
-docker compose -f infra/docker/docker-compose.dev.yml logs -f
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml logs -f
 
 # Log di un servizio specifico
-docker compose -f infra/docker/docker-compose.dev.yml logs -f web-landing
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml logs -f web-landing
 
 # Ferma tutti i servizi
-docker compose -f infra/docker/docker-compose.dev.yml down
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml down
 
 # Ferma e rimuove volumi
-docker compose -f infra/docker/docker-compose.dev.yml down -v
+docker compose -f infra/houseblockDocker/docker-compose.dev.yml down -v
 ```
 
 ## Comandi Utili
@@ -303,14 +303,14 @@ Se una porta è già in uso, puoi:
 
 1. Verifica i log:
    ```bash
-   docker compose -f infra/docker/docker-compose.dev.yml logs <service-name>
+   docker compose -f infra/houseblockDocker/docker-compose.dev.yml logs <service-name>
    ```
 
 2. Verifica le variabili d'ambiente nel file `.env`
 
 3. Ricostruisci l'immagine:
    ```bash
-   docker compose -f infra/docker/docker-compose.dev.yml build --no-cache <service-name>
+   docker compose -f infra/houseblockDocker/docker-compose.dev.yml build --no-cache <service-name>
    ```
 
 ### Dipendenze non installate

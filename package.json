@@ -6,17 +6,20 @@
   "scripts": {
     "dev": "pnpm --filter web-landing dev",
     "dev:web": "pnpm --filter web-landing dev",
-    "dev:services": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+    "dev:services": "docker compose -f infra/houseblockDocker/docker-compose.services.yml up -d",
     "dev:all": "pnpm dev:services && pnpm dev:web",
     "build": "pnpm -r build",
+    "build:web": "pnpm --filter web-landing build",
     "build:all": "pnpm -r build",
     "start": "pnpm --filter web-landing start",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "install:all": "pnpm install",
-    "docker:dev": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
-    "docker:prod": "docker compose -f infra/docker/docker-compose.prod.yml up -d"
+    "docker:dev": "docker compose -f infra/houseblockDocker/docker-compose.dev.yml up -d",
+    "docker:prod": "docker compose -f infra/houseblockDocker/docker-compose.prod.yml up -d",
+    "docker:services": "docker compose -f infra/houseblockDocker/docker-compose.services.yml up -d",
+    "docker:n8n": "docker compose -f infra/houseblockDocker/docker-compose.n8n.yml up -d"
   },
   "devDependencies": {
     "pnpm": "^8.0.0",
